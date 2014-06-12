@@ -9,3 +9,4 @@ Don't modify the master branch.
 CSGの皆でREADME.mdのみ更新していきましょう。
 使い方や気づいたことを書いていきましょう。
 
+git clone -b ブランチ名 https://github.com/csg-tokyo/playground.git

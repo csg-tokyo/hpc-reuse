@@ -12,32 +12,22 @@ import mpi.MPIException;
 public class Hadoop {
 	public final static String HADOOP_FOLDER 			= "/home/mrhpc/hadoop";
 	
-	private int rank;
-	
 	public Hadoop(){
 		try {
-			rank = MPI.COMM_WORLD.getRank();
+			int rank = MPI.COMM_WORLD.getRank();
+			int size = MPI.COMM_WORLD.getSize();
 			
 			// Print node info
 			InetAddress ip = InetAddress.getLocalHost();
-			System.out.println("P" + rank + ": " + ip.getHostName() + " - " + ip.getHostAddress());	
-			
-			//initialize(rank);
-			
+			System.out.println("P" + rank + "/" + size + ": " + ip.getHostName() + " - " + ip.getHostAddress());	
+						
 			if (rank == 0){
 				// Master node
-				Info master = new Info();
-				master.set("host", "master");
-				master.set("soft", "soft_limits");
-				
-				Info slave1 = new Info();
-				slave1.set("host", "slave1");
-				slave1.set("soft", "soft_limits");	
-				startMaster(rank, master, slave1);
-				
+				startMaster(rank);
+				spawnOnSlaves(rank, size - 1);
 			}else{
 				// Slaves node
-				//startSlaves(rank);
+				startSlaves(rank);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -46,38 +36,45 @@ public class Hadoop {
 		}
 	}
 	
-	public void startMaster(int rank, Info master, Info slave1){
-		try {
-			//String commands[] = {"hadoop-daemon.sh", "yarn-daemon.sh", "hadoop-daemon.sh", "yarn-daemon.sh"};
-	        //String params[][] = {{"start", "namenode"}, {"start", "resourcemanager"}, {"start", "datanode"}, {"start", "nodemanager"}};
-
-			String commands[] = {"nodemanager.sh"};
-	        String params[][] = {};			
-			
-			int procs[] = {1};
-	        Info infos[] = {slave1};
-	        MPI.COMM_SELF.spawnMultiple(commands, params, procs, infos, rank, null);	
-			System.out.println("Start Master " + rank + " --> OK");				
-		} catch (MPIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+	public void startMaster(int rank){
+		runCommand(HADOOP_FOLDER + "/sbin/hadoop-daemon.sh start namenode");
+		runCommand(HADOOP_FOLDER + "/sbin/yarn-daemon.sh start resourcemanager");
+		System.out.println("Start Master " + rank + " --> OK");		
 	}
 	
-	public void startSlaves(int rank, Info info){
+	public void startSlaves(int rank){
+		runCommand(HADOOP_FOLDER + "/sbin/hadoop-daemon.sh start datanode");
+		System.out.println("Start Slave " + rank + " --> OK");	
+	}	
+	
+	public void spawnOnSlaves(int rank, int numberSlaves){
 		try {
-			String commands[] = {"hadoop-daemon.sh", "yarn-daemon.sh"};
-	        String params[][] = {{"start", "datanode"}, {"start", "nodemanager"}};
-	        int procs[] = {1, 1};
-	        Info infos[] = {info, info};
-	        System.out.println("Rank " + rank + ": " + info.get("host"));
-	        MPI.COMM_WORLD.spawnMultiple(commands, params, procs, infos, rank, null);				
-			System.out.println("Start Slave " + rank + " --> OK");				
+			String commands[] = new String[numberSlaves];
+			for (int i = 0; i < numberSlaves; i++) {
+				commands[i] = "nodemanager.sh";
+			}
+
+			String params[][] = {};
+
+			Info infos[] = new Info[numberSlaves];
+			for (int i = 0; i < numberSlaves; i++) {
+				Info slave = new Info();
+				slave.set("host", "slave" + (i + 1));
+				slave.set("soft", "soft_limits");
+				infos[i] = slave;
+			}
+
+			int procs[] = new int[numberSlaves];
+			for (int i = 0; i < numberSlaves; i++) {
+				procs[i] = 1;
+			}
+
+			MPI.COMM_SELF.spawnMultiple(commands, params, procs, infos, rank, null);
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}			
-	}	
+		}
+	}
 	
 	/**
 	 * Call bash command

@@ -14,8 +14,10 @@ public class Child {
 			MPI.Init(args);
 			Intercomm parent;
 			parent = Intercomm.getParent();
+			int rank = MPI.COMM_WORLD.getRank();
+			
 			InetAddress ip = InetAddress.getLocalHost();
-			System.out.println("Child: parent has " + parent.getSize() + ": " + ip.getHostName() + " - " + ip.getHostAddress());			
+			System.out.println("Child " + rank + " : parent has " + parent.getSize() + " --- " + ip.getHostName() + " - " + ip.getHostAddress());			
 			MPI.Finalize();
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block

@@ -24,6 +24,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import mpi.MPI;
+import mpi.MPIException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.classification.InterfaceAudience.Private;
@@ -378,12 +381,25 @@ public class NodeManager extends CompositeService
   }
 
   public static void main(String[] args) {
-    Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
-    StringUtils.startupShutdownMessage(NodeManager.class, args, LOG);
-    NodeManager nodeManager = new NodeManager();
-    Configuration conf = new YarnConfiguration();
-    setHttpPolicy(conf);
-    nodeManager.initAndStartNodeManager(conf, false);
+	  try {
+		MPI.Init(args);
+		int rank = MPI.COMM_WORLD.getRank();
+		LOG.info("Start MPI with rank " + rank + " at Nodemanager");
+		
+	    Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
+	    StringUtils.startupShutdownMessage(NodeManager.class, args, LOG);
+	    NodeManager nodeManager = new NodeManager();
+	    Configuration conf = new YarnConfiguration();
+	    setHttpPolicy(conf);
+	    nodeManager.initAndStartNodeManager(conf, false);
+	    
+	    LOG.info("Finish MPI with rank " + rank + " at Nodemanager");
+	    /* Finalize should be called somewhere else, not here since it might shutdown MPI */
+	    //MPI.Finalize();		
+	} catch (MPIException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
   
   private static void setHttpPolicy(Configuration conf) {

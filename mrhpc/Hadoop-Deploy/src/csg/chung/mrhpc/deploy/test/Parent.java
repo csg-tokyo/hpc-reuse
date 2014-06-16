@@ -17,18 +17,18 @@ public class Parent {
 			
 			// Spawn
 			if (rank == 0){
-				Info master = new Info();
-				master.set("host", "master");
-				master.set("soft", "soft_limits");
-				
 				Info slave1 = new Info();
 				slave1.set("host", "slave1");
 				slave1.set("soft", "soft_limits");	
 				
-				String commands[] = {"nodemanager.sh"};
-				String params[][] = {{}};
-				int procs[] = {1};
-				Info infos[] = {slave1};
+				Info slave2 = new Info();
+				slave2.set("host", "slave2");
+				slave2.set("soft", "soft_limits");					
+				
+				String commands[] = {"java", "java"};
+				String params[][] = {{"csg.chung.mrhpc.deploy.test.Child"}, {"csg.chung.mrhpc.deploy.test.Child"}};
+				int procs[] = {1, 1};
+				Info infos[] = {slave1, slave2};
 				
 				MPI.COMM_WORLD.spawnMultiple(commands, params, procs, infos, 0, null);			
 			}

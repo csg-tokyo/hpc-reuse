@@ -1,0 +1,3 @@
+2014-06-05 17:49:58,868 WARN  [main] util.NativeCodeLoader (NativeCodeLoader.java:<clinit>(62)) - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2014-06-05 17:49:59,626 WARN  [main] token.Token (Token.java:getClassForIdentifier(118)) - Cannot find class for token kind token0
+2014-06-05 17:49:59,626 INFO  [main] security.TokenCache (TokenCache.java:obtainTokensForNamenodesInternal(125)) - Got dt for null; Kind: token0, Service: service3, Ident: 

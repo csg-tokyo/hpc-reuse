@@ -1,0 +1,2 @@
+2014-06-05 17:49:03,806 WARN  [main] util.NativeCodeLoader (NativeCodeLoader.java:<clinit>(62)) - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2014-06-05 17:49:04,629 INFO  [main] mapred.FileInputFormat (FileInputFormat.java:listStatus(253)) - Total input paths to process : 2

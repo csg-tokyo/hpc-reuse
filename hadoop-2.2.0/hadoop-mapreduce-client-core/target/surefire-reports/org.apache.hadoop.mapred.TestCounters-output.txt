@@ -1,0 +1,3 @@
+2014-06-05 17:49:01,685 WARN  [main] mapreduce.Counters (AbstractCounters.java:getGroup(234)) - Group org.apache.hadoop.mapred.Task$Counter is deprecated. Use org.apache.hadoop.mapreduce.TaskCounter instead
+2014-06-05 17:49:01,692 WARN  [main] mapreduce.Counters (AbstractCounters.java:getGroup(234)) - Group org.apache.hadoop.mapred.JobInProgress$Counter is deprecated. Use org.apache.hadoop.mapreduce.JobCounter instead
+2014-06-05 17:49:01,692 WARN  [main] mapreduce.Counters (AbstractCounters.java:getGroup(234)) - Group FileSystemCounters is deprecated. Use org.apache.hadoop.mapreduce.FileSystemCounter instead

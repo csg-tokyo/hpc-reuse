@@ -1,0 +1,15 @@
+2014-06-05 17:50:10,177 WARN  [main] util.NativeCodeLoader (NativeCodeLoader.java:<clinit>(62)) - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2014-06-05 17:50:10,589 INFO  [main] reduce.MergeManagerImpl (MergeManagerImpl.java:<init>(193)) - MergerManager: memoryLimit=668309888, maxSingleShuffleLimit=167077472, mergeThreshold=441084544, ioSortFactor=10, memToMemMergeOutputsThreshold=10
+2014-06-05 17:50:10,713 INFO  [main] reduce.MergeManagerImpl (MergeManagerImpl.java:merge(464)) - Initiating in-memory merge with 2 segments...
+2014-06-05 17:50:10,733 INFO  [main] mapred.Merger (Merger.java:merge(568)) - Merging 2 sorted segments
+2014-06-05 17:50:10,734 INFO  [main] mapred.Merger (Merger.java:merge(667)) - Down to the last merge-pass, with 1 segments left of total size: 57 bytes
+2014-06-05 17:50:10,745 INFO  [main] reduce.MergeManagerImpl (MergeManagerImpl.java:merge(485)) - attempt_a_0000_r_000000_0 Merge of the 2 files in-memory complete. Local file is /tmp/hadoop-chung/mapred/local/output/map_1.out.merged of size 65
+2014-06-05 17:50:10,761 INFO  [main] reduce.MergeManagerImpl (MergeManagerImpl.java:finalMerge(667)) - finalMerge called with 0 in-memory map-outputs and 1 on-disk map-outputs
+2014-06-05 17:50:10,763 INFO  [main] reduce.MergeManagerImpl (MergeManagerImpl.java:finalMerge(772)) - Merging 1 files, 65 bytes from disk
+2014-06-05 17:50:10,765 INFO  [main] reduce.MergeManagerImpl (MergeManagerImpl.java:finalMerge(787)) - Merging 0 segments, 0 bytes from memory into reduce
+2014-06-05 17:50:10,766 INFO  [main] mapred.Merger (Merger.java:merge(568)) - Merging 1 sorted segments
+2014-06-05 17:50:10,774 INFO  [main] mapred.Merger (Merger.java:merge(667)) - Down to the last merge-pass, with 1 segments left of total size: 53 bytes
+2014-06-05 17:50:10,886 INFO  [main] mapred.Merger (Merger.java:merge(568)) - Merging 0 sorted segments
+2014-06-05 17:50:10,887 INFO  [main] mapred.Merger (Merger.java:merge(667)) - Down to the last merge-pass, with 0 segments left of total size: 0 bytes
+2014-06-05 17:50:10,954 INFO  [main] mapred.Merger (Merger.java:merge(568)) - Merging 0 sorted segments
+2014-06-05 17:50:10,954 INFO  [main] mapred.Merger (Merger.java:merge(667)) - Down to the last merge-pass, with 0 segments left of total size: 0 bytes

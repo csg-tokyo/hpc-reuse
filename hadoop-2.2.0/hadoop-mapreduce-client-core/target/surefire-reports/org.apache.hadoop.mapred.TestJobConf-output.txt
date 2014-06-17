@@ -1,5 +1,0 @@
-2014-06-05 17:49:16,212 WARN  [Thread-0] util.NativeCodeLoader (NativeCodeLoader.java:<clinit>(62)) - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-2014-06-05 17:49:16,489 INFO  [Thread-0] Configuration.deprecation (Configuration.java:warnOnceIfDeprecated(840)) - session.id is deprecated. Instead, use dfs.metrics.session-id
-2014-06-05 17:49:16,495 INFO  [Thread-0] Configuration.deprecation (Configuration.java:warnOnceIfDeprecated(840)) - mapred.job.map.memory.mb is deprecated. Instead, use mapreduce.map.memory.mb
-2014-06-05 17:49:16,496 INFO  [Thread-0] Configuration.deprecation (Configuration.java:warnOnceIfDeprecated(840)) - mapred.job.reduce.memory.mb is deprecated. Instead, use mapreduce.reduce.memory.mb
-2014-06-05 17:49:16,498 WARN  [Thread-0] mapred.JobConf (JobConf.java:getMaxPhysicalMemoryForTask(1999)) - The API getMaxPhysicalMemoryForTask() is deprecated. Refer to the APIs getMemoryForMapTask() and getMemoryForReduceTask() for details.

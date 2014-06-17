@@ -1,6 +1,0 @@
-2014-06-05 17:49:47,778 WARN  [main] util.NativeCodeLoader (NativeCodeLoader.java:<clinit>(62)) - Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
-2014-06-05 17:49:48,787 INFO  [main] input.FileInputFormat (FileInputFormat.java:listStatus(287)) - Total input paths to process : 3
-2014-06-05 17:49:48,884 INFO  [main] Configuration.deprecation (Configuration.java:warnOnceIfDeprecated(840)) - mapred.input.dir.recursive is deprecated. Instead, use mapreduce.input.fileinputformat.input.dir.recursive
-2014-06-05 17:49:48,888 INFO  [main] input.FileInputFormat (FileInputFormat.java:listStatus(287)) - Total input paths to process : 3
-2014-06-05 17:49:48,986 INFO  [main] input.FileInputFormat (FileInputFormat.java:listStatus(287)) - Total input paths to process : 2
-2014-06-05 17:49:49,069 INFO  [main] input.FileInputFormat (FileInputFormat.java:listStatus(287)) - Total input paths to process : 2

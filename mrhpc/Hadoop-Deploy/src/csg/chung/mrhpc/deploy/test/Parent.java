@@ -4,8 +4,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import mpi.MPI;
-import mpi.MPIException;
 import mpi.Info;
+import mpi.MPIException;
 
 public class Parent {
 
@@ -19,16 +19,6 @@ public class Parent {
 					+ " - " + ip.getHostAddress());
 
 			int numberSlaves = size - 1;
-
-			String params[][] = new String[2][];
-			for (int i = 0; i < 2; i++) {
-				params[i] = new String[1];
-				params[i][0] = "csg.chung.mrhpc.deploy.test.Child";
-			}
-			
-			for (int i = 0; i < 2; i++) {
-				System.out.println(params[i][0]);
-			}
 			
 			if (numberSlaves > 0) {
 				try {
@@ -37,11 +27,16 @@ public class Parent {
 						commands[i] = "java";
 					}
 
+					String params[][] = new String[numberSlaves][];
+					for (int i = 0; i < numberSlaves; i++) {
+						params[i] = new String[1];
+						params[i][0] = "csg.chung.mrhpc.deploy.test.Child";
+					}
+										
 					Info infos[] = new Info[numberSlaves];
 					for (int i = 0; i < numberSlaves; i++) {
-						Info slave = new Info();
-						slave.set("host", "slave" + (i + 1));
-						infos[i] = slave;
+						infos[i] = new Info();
+						infos[i].set("host", "slave" + (i+1));
 					}
 
 					int procs[] = new int[numberSlaves];
@@ -49,18 +44,19 @@ public class Parent {
 						procs[i] = 1;
 					}
 
-					int error[] = new int[numberSlaves];
-
-					MPI.COMM_SELF.spawnMultiple(commands, params, procs, infos,
-							rank, error);
-
-					if (rank == 0) {
-						for (int i = 0; i < numberSlaves; i++) {
-							if (error[i] == MPI.SUCCESS) {
-								System.out.println("Spawn " + i + " OK");
+					for (int i = 0; i < numberSlaves; i++) {
+						int error[] = new int[procs[i]];
+						MPI.COMM_WORLD.spawn(commands[i], params[i], procs[i], infos[i],
+								0, error);
+						if (rank == 0) {
+							for (int j = 0; j < procs[i]; j++) {
+								if (error[j] == MPI.SUCCESS) {
+									System.out.println("Spawn " + i + " OK");
+								}
 							}
-						}
+						}						
 					}
+					
 				} catch (MPIException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

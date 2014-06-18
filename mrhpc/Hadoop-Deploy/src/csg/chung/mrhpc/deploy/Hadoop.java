@@ -6,16 +6,21 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 
 import mpi.Info;
+import mpi.Intercomm;
 import mpi.MPI;
 import mpi.MPIException;
 
 public class Hadoop {
 	public final static String HADOOP_FOLDER 			= "/home/mrhpc/hadoop";
+	private Intercomm spawn[];
+	private int rank, size, numberSlaves;
 	
 	public Hadoop(){
 		try {
-			int rank = MPI.COMM_WORLD.getRank();
-			int size = MPI.COMM_WORLD.getSize();
+			rank = MPI.COMM_WORLD.getRank();
+			size = MPI.COMM_WORLD.getSize();
+			numberSlaves = size - 1;
+			spawn = new Intercomm[numberSlaves];
 			
 			// Print node info
 			InetAddress ip = InetAddress.getLocalHost();
@@ -24,10 +29,14 @@ public class Hadoop {
 			if (rank == 0){
 				// Master node
 				startMaster(rank);
-				spawnOnSlaves(rank, size - 1);
 			}else{
 				// Slaves node
 				startSlaves(rank);
+			}
+			
+			// Spawn
+			if (numberSlaves > 0) {
+				spawnOnSlaves(rank, numberSlaves);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -56,20 +65,29 @@ public class Hadoop {
 
 			String params[][] = {};
 
+			int procs[] = new int[numberSlaves];
+			for (int i = 0; i < numberSlaves; i++) {
+				procs[i] = 1;
+			}			
+			
 			Info infos[] = new Info[numberSlaves];
 			for (int i = 0; i < numberSlaves; i++) {
 				Info slave = new Info();
 				slave.set("host", "slave" + (i + 1));
-				slave.set("soft", "soft_limits");
 				infos[i] = slave;
 			}
 
-			int procs[] = new int[numberSlaves];
 			for (int i = 0; i < numberSlaves; i++) {
-				procs[i] = 1;
+				int error[] = new int[procs[i]];
+				spawn[i] = MPI.COMM_WORLD.spawn(commands[i], params[i], procs[i], infos[i], 0, error);
+				if (rank == 0) {
+					for (int j = 0; j < procs[i]; j++) {
+						if (error[j] == MPI.SUCCESS) {
+							System.out.println("Spawn " + i + " OK");
+						}
+					}
+				}				
 			}
-
-			MPI.COMM_SELF.spawnMultiple(commands, params, procs, infos, rank, null);
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

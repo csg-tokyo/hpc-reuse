@@ -63,7 +63,12 @@ public class Hadoop {
 				commands[i] = "nodemanager.sh";
 			}
 
-			String params[][] = {};
+			String params[][] = new String[numberSlaves][];
+			for (int i = 0; i < numberSlaves; i++) {
+				params[i] = new String[2];
+				params[i][0] = "start";
+				params[i][1] = "nodemanager";				
+			}
 
 			int procs[] = new int[numberSlaves];
 			for (int i = 0; i < numberSlaves; i++) {
@@ -72,9 +77,8 @@ public class Hadoop {
 			
 			Info infos[] = new Info[numberSlaves];
 			for (int i = 0; i < numberSlaves; i++) {
-				Info slave = new Info();
-				slave.set("host", "slave" + (i + 1));
-				infos[i] = slave;
+				infos[i] = new Info();
+				infos[i].set("host", "slave" + (i + 1));
 			}
 
 			for (int i = 0; i < numberSlaves; i++) {

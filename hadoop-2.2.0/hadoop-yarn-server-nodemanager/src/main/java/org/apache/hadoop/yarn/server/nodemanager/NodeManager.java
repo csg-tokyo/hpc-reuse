@@ -381,6 +381,7 @@ public class NodeManager extends CompositeService
   }
 
   public static void main(String[] args) {
+	  // MPI code is inserted here
 	  try {
 		MPI.Init(args);
 		int rank = MPI.COMM_WORLD.getRank();
@@ -393,8 +394,8 @@ public class NodeManager extends CompositeService
 	    setHttpPolicy(conf);
 	    nodeManager.initAndStartNodeManager(conf, false);
 	    
-	    LOG.info("Finish MPI with rank " + rank + " at Nodemanager");
 	    /* Finalize should be called somewhere else, not here since it might shutdown MPI */
+	    //LOG.info("Finish MPI with rank " + rank + " at Nodemanager");
 	    //MPI.Finalize();		
 	} catch (MPIException e) {
 		// TODO Auto-generated catch block

@@ -25,11 +25,16 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+
+import mpi.Info;
+import mpi.MPI;
+import mpi.MPIException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -192,7 +197,31 @@ public class DefaultContainerExecutor extends ContainerExecutor {
           new File(containerWorkDir.toUri().getPath()),
           container.getLaunchContext().getEnvironment());      // sanitized env
       if (isContainerActive(containerId)) {
-        shExec.execute();
+    	  		// MPI code is inserted here
+				try {
+					int rank = MPI.COMM_WORLD.getRank();
+					LOG.info("Start spawning for a Container at rank of Nodemanager: " + rank);
+					String cmd = command[0];
+			        String params[] = new String[command.length - 1];
+			        for (int i=1; i < command.length; i++){
+			        	params[i-1] = command[i];
+			        }
+			        int proc = 1;
+			        Info info = new Info();
+			        InetAddress ip = InetAddress.getLocalHost();
+					info.set("host", ip.getHostName());
+					int error[] = new int[proc];
+			        MPI.COMM_WORLD.spawn(cmd, params, proc, info, rank, error);
+			        if (error[0] == MPI.SUCCESS){
+			        	LOG.info("Spawn Container " + Arrays.toString(command) + ": OK");
+			        }else{
+			        	LOG.info("Spawn Container " + Arrays.toString(command) + ": Fail");
+			        }
+				} catch (MPIException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//shExec.execute();
       }
       else {
         LOG.info("Container " + containerIdStr +

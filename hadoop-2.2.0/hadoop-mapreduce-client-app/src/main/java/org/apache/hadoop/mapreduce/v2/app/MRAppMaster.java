@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import mpi.MPI;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1317,6 +1319,11 @@ public class MRAppMaster extends CompositeService {
 
   public static void main(String[] args) {
     try {
+    	// MPI code is inserted here
+    	MPI.Init(args);
+		int rank = MPI.COMM_WORLD.getRank();
+		LOG.info("Start MPI with rank " + rank + " at MRAppMaster");    
+		
       Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
       String containerIdStr =
           System.getenv(Environment.CONTAINER_ID.name());
@@ -1372,6 +1379,10 @@ public class MRAppMaster extends CompositeService {
       // set job classloader if configured
       MRApps.setJobClassLoader(conf);
       initAndStartAppMaster(appMaster, conf, jobUserName);
+      
+	    /* Finalize should be called somewhere else, not here since it might shutdown MPI */
+	    //LOG.info("Finish MPI with rank " + rank + " at MRAppMaster");
+	    //MPI.Finalize();		      
     } catch (Throwable t) {
       LOG.fatal("Error starting MRAppMaster", t);
       System.exit(1);

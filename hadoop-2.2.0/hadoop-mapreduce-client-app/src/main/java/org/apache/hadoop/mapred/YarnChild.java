@@ -28,6 +28,8 @@ import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.List;
 
+import mpi.MPI;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
@@ -72,6 +74,11 @@ class YarnChild {
   static volatile TaskAttemptID taskid = null;
 
   public static void main(String[] args) throws Throwable {
+  	// MPI code is inserted here
+  	MPI.Init(args);
+  	int rank = MPI.COMM_WORLD.getRank();
+	LOG.info("Start MPI with rank " + rank + " at YarnChild");    	 
+	
     Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
     LOG.debug("Child starting");
 
@@ -210,6 +217,10 @@ class YarnChild {
       // there is no more logging done.
       LogManager.shutdown();
     }
+    
+    /* Finalize should be called somewhere else, not here since it might shutdown MPI */
+    //LOG.info("Finish MPI with rank " + rank + " at YarnChild");
+    //MPI.Finalize();		          
   }
 
   /**

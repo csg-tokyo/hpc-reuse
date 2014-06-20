@@ -29,11 +29,12 @@ public class Parent {
 
 			if (numberSlaves > 0) {
 				spawnOnSlaves();
-				if (rank == 0){
+				//if (rank == 0){
 					for (int i = 0; i < numberSlaves; i++){ 	
-						helloToChild(spawn[i], 0);
+						//helloToChild(spawn[i], 0);
+						receiveSpawnFromChild(spawn[i], 0, "slave" + (i+1));
 					}
-				}
+				//}
 			}
 			MPI.Finalize();
 		} catch (MPIException e) {
@@ -55,6 +56,39 @@ public class Parent {
 			e.printStackTrace();
 		}
 	}
+	
+	public void receiveSpawnFromChild(Intercomm group, int child, String host){
+		try {
+			char[] message = new char[20]; 
+			group.recv(message, 20, MPI.CHAR, child, Constants.TAG);
+			String cmd = String.valueOf(message).trim();
+			
+			//System.out.println(host + " start spawning Grand Child");
+			spawnGrandChild(cmd, host);
+			
+			// Spawn
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
+	}
+	
+	public void spawnGrandChild(String cmd, String host){
+		try {
+			String params[] = {};
+			int proc = 1;
+			Info info = new Info();
+			info.set("host", host);
+			int error[] = new int[proc];
+			MPI.COMM_WORLD.spawn(cmd, params, proc, info, 0, error);
+			if (error[0] == MPI.SUCCESS) {
+				System.out.println("Grand child " + host + " Spawned " + " OK");
+			}
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}	
 	
 	public void spawnOnSlaves() {
 		try {

@@ -19,11 +19,15 @@
 package org.apache.hadoop.yarn.server.nodemanager;
 
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import mpi.Info;
 import mpi.MPI;
 import mpi.MPIException;
 
@@ -386,14 +390,14 @@ public class NodeManager extends CompositeService
 		MPI.Init(args);
 		int rank = MPI.COMM_WORLD.getRank();
 		LOG.info("Start MPI with rank " + rank + " at Nodemanager");
-		
+				
 	    Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
 	    StringUtils.startupShutdownMessage(NodeManager.class, args, LOG);
 	    NodeManager nodeManager = new NodeManager();
 	    Configuration conf = new YarnConfiguration();
 	    setHttpPolicy(conf);
 	    nodeManager.initAndStartNodeManager(conf, false);
-	    
+	    	    
 	    /* Finalize should be called somewhere else, not here since it might shutdown MPI */
 	    //LOG.info("Finish MPI with rank " + rank + " at Nodemanager");
 	    //MPI.Finalize();		

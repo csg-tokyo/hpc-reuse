@@ -21,8 +21,12 @@ package org.apache.hadoop.yarn.server.nodemanager;
 import static org.apache.hadoop.fs.CreateFlag.CREATE;
 import static org.apache.hadoop.fs.CreateFlag.OVERWRITE;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -33,6 +37,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import mpi.Info;
+import mpi.Intercomm;
 import mpi.MPI;
 import mpi.MPIException;
 
@@ -199,24 +204,12 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       if (isContainerActive(containerId)) {
     	  		// MPI code is inserted here
 				try {
-					int rank = MPI.COMM_WORLD.getRank();
-					LOG.info("Start spawning for a Container at rank of Nodemanager: " + rank);
-					String cmd = command[0];
-			        String params[] = new String[command.length - 1];
-			        for (int i=1; i < command.length; i++){
-			        	params[i-1] = command[i];
-			        }
-			        int proc = 1;
-			        Info info = new Info();
-			        InetAddress ip = InetAddress.getLocalHost();
-					info.set("host", ip.getHostName());
-					int error[] = new int[proc];
-			        MPI.COMM_WORLD.spawn(cmd, params, proc, info, rank, error);
-			        if (error[0] == MPI.SUCCESS){
-			        	LOG.info("Spawn Container " + Arrays.toString(command) + ": OK");
-			        }else{
-			        	LOG.info("Spawn Container " + Arrays.toString(command) + ": Fail");
-			        }
+					Intercomm parent = Intercomm.getParent();
+
+					System.out.println("Parent size: " + parent.getRemoteSize());
+					for (int i=0; i < parent.getRemoteSize(); i++){
+						sendSpawnToParent(parent, i, command[command.length - 1]);
+					}
 				} catch (MPIException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -257,6 +250,58 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     return 0;
   }
 
+	public void sendSpawnToParent(Intercomm group, int parent, String cmd){
+		try {
+			char[] message = cmd.toCharArray();			
+			group.send(message, message.length, MPI.CHAR, parent, 99);
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+  
+  /**
+   * MPI code here
+   * 
+   * @param file
+   * @return
+   */
+  public String runContainer(File file){
+		try {
+		  	FileReader fr = new FileReader(file);
+			BufferedReader in = new BufferedReader(fr);
+			String line;
+			String last = "";
+			while ((line = in.readLine()) != null){
+				last = line;
+			}
+			in.close();
+			fr.close();
+			
+			File container = new File(file.getParent() + "/mpi_container.sh");
+			FileWriter fw = new FileWriter(container);
+			BufferedWriter out = new BufferedWriter(fw);
+			
+			out.write("#!/usr/bin/env bash" + "\n\n");
+			last = last.replace("  ", " ");
+			last = last.replace("$JAVA_HOME", "/usr/java/default");
+			last = last.replace("stderr ", "stderr");
+			out.write(last);
+			
+			out.close();
+			fw.close();
+			
+			container.setExecutable(true);
+			
+			return container.getAbsolutePath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+  }
+  
   private abstract class LocalWrapperScriptBuilder {
 
     private final Path wrapperScriptPath;

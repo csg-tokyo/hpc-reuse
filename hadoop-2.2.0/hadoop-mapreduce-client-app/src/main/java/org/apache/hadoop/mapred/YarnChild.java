@@ -75,7 +75,9 @@ class YarnChild {
 
   public static void main(String[] args) throws Throwable {
   	// MPI code is inserted here
-  	MPI.Init(args);
+	LOG.info("MPI is initializing...");    
+	String params[] = {};
+  	MPI.Init(params);
   	int rank = MPI.COMM_WORLD.getRank();
 	LOG.info("Start MPI with rank " + rank + " at YarnChild");    	 
 	

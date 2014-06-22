@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -40,6 +42,7 @@ import mpi.Info;
 import mpi.Intercomm;
 import mpi.MPI;
 import mpi.MPIException;
+import mpi.Request;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -62,6 +65,7 @@ import org.apache.hadoop.yarn.server.nodemanager.containermanager.localizer.Cont
 import org.apache.hadoop.yarn.util.ConverterUtils;
 
 import com.google.common.annotations.VisibleForTesting;
+
 
 public class DefaultContainerExecutor extends ContainerExecutor {
 
@@ -205,23 +209,32 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     	  		// MPI code is inserted here
 				try {
 					Intercomm parent = Intercomm.getParent();
-
-					System.out.println("Parent size: " + parent.getRemoteSize());
+					InetAddress ip = InetAddress.getLocalHost();
+					System.out.println("Parent size 123: " + parent.getRemoteSize() + " - " + ip.getHostName());
 					for (int i=0; i < parent.getRemoteSize(); i++){
 						sendSpawnToParent(parent, i, command[command.length - 1]);
 					}
+					
+
 				} catch (MPIException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				System.out.println("start start waiting for completion" + Arrays.toString(command));
+				for (;;){
+					
+				}
 				//shExec.execute();
+				//System.out.println("end end waiting for completion" + Arrays.toString(command));
       }
       else {
         LOG.info("Container " + containerIdStr +
             " was marked as inactive. Returning terminated error");
         return ExitCode.TERMINATED.getExitCode();
       }
-    } catch (IOException e) {
+      
+    } 
+  catch (IOException e) {
       if (null == shExec) {
         return -1;
       }
@@ -247,13 +260,28 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     } finally {
       ; //
     }
-    return 0;
+    
+    //return 0;
   }
 
+  	public void waitForSpawn(Intercomm group, int parent){
+		try {
+			char[] message = new char[100]; 
+			group.recv(message, 100, MPI.CHAR, parent, 99);
+			String recv = String.valueOf(message).trim();
+			System.out.println(recv);
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				  		
+  	}
+  
 	public void sendSpawnToParent(Intercomm group, int parent, String cmd){
 		try {
-			char[] message = cmd.toCharArray();			
-			group.send(message, message.length, MPI.CHAR, parent, 99);
+			CharBuffer message = ByteBuffer.allocateDirect(500).asCharBuffer();
+			message.put(cmd.toCharArray());	
+			Request request = group.iSend(message, cmd.toCharArray().length, MPI.CHAR, parent, 99);	
+			request.waitFor();
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -439,11 +467,11 @@ public class DefaultContainerExecutor extends ContainerExecutor {
   public void deleteAsUser(String user, Path subDir, Path... baseDirs)
       throws IOException, InterruptedException {
     if (baseDirs == null || baseDirs.length == 0) {
-      LOG.info("Deleting absolute path : " + subDir);
-      if (!lfs.delete(subDir, true)) {
+      //LOG.info("Deleting absolute path : " + subDir);
+      //if (!lfs.delete(subDir, true)) {
         //Maybe retry
-        LOG.warn("delete returned false for path: [" + subDir + "]");
-      }
+      //  LOG.warn("delete returned false for path: [" + subDir + "]");
+      //}
       return;
     }
     for (Path baseDir : baseDirs) {

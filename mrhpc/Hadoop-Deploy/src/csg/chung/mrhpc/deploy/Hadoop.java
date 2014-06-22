@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 
 import mpi.Info;
 import mpi.Intercomm;
 import mpi.MPI;
 import mpi.MPIException;
+import mpi.Request;
 
 public class Hadoop {
 	public final static String HADOOP_FOLDER 			= "/home/mrhpc/hadoop";
@@ -37,9 +40,21 @@ public class Hadoop {
 			// Spawn
 			if (numberSlaves > 0) {
 				spawnOnSlaves(rank, numberSlaves);
+				Request request[] = new Request[numberSlaves];
+				CharBuffer message[] = new CharBuffer[numberSlaves];
+				for (int i = 0; i < numberSlaves; i++){
+					message[i] = ByteBuffer.allocateDirect(500).asCharBuffer();
+					request[i] = spawn[i].iRecv(message[i], 500, MPI.CHAR, 0, Constants.TAG);
+				}
 				while (true) {
 					for (int i = 0; i < numberSlaves; i++) {
-						receiveSpawnFromChild(spawn[i], 0, "slave" + (i + 1));
+						if (request[i].test()){
+							String cmd = message[i].toString().trim();
+							System.out.println("slave" + (i+1) + " start spawning Grand Child: " + cmd);
+							spawnGrandChild(cmd, spawn[i], 0, "slave" + (i+1));
+							message[i] = ByteBuffer.allocateDirect(500).asCharBuffer();
+							request[i] = spawn[i].iRecv(message[i], 500, MPI.CHAR, 0, Constants.TAG);
+						}
 					}
 				}
 			}
@@ -47,6 +62,24 @@ public class Hadoop {
 			e.printStackTrace();
 		} catch (MPIException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public class SpawnConnection extends Thread{
+		private Intercomm spawn;
+		private String host;
+		private int child;
+		
+		public SpawnConnection(Intercomm spawn, int child, String host){
+			this.spawn = spawn;
+			this.host = host;
+			this.child = child;
+		}
+		
+		public void run(){
+			while(true){
+				receiveSpawnFromChild(spawn, child, host);
+			}
 		}
 	}
 	
@@ -109,8 +142,8 @@ public class Hadoop {
 			group.recv(message, 500, MPI.CHAR, child, Constants.TAG);
 			String cmd = String.valueOf(message).trim();
 			
-			//System.out.println(host + " start spawning Grand Child");
-			spawnGrandChild(cmd, host);
+			System.out.println(host + " start spawning Grand Child");
+			spawnGrandChild(cmd, group, child, host);
 			
 			// Spawn
 		} catch (MPIException e) {
@@ -119,7 +152,7 @@ public class Hadoop {
 		}				
 	}
 	
-	public void spawnGrandChild(String cmd, String host){
+	public void spawnGrandChild(String cmd, Intercomm group, int child, String host){
 		try {
 			String params[] = {};
 			int proc = 1;
@@ -129,6 +162,9 @@ public class Hadoop {
 			MPI.COMM_WORLD.spawn(cmd, params, proc, info, 0, error);
 			if (error[0] == MPI.SUCCESS) {
 				System.out.println("Grand child " + host + " Spawned " + " OK");
+				//String str = "Container at " + host + " started successfully.";
+				//char[] message = str.toCharArray();			
+				//group.send(message, message.length, MPI.CHAR, child, Constants.TAG);					
 			}
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block

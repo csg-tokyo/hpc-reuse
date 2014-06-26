@@ -19,6 +19,14 @@ package org.apache.hadoop.mapreduce.task.reduce;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+
+import mpi.Intercomm;
+import mpi.MPI;
+import mpi.MPIException;
+import mpi.Request;
 
 import org.apache.hadoop.classification.InterfaceAudience;
 import org.apache.hadoop.classification.InterfaceStability;
@@ -122,7 +130,73 @@ class InMemoryMapOutput<K, V> extends MapOutput<K, V> {
       CodecPool.returnDecompressor(decompressor);
     }
   }
+  
+	public void shuffleMPI(MapHost host, InputStream input, String mapId, long compressedLength,
+			long decompressedLength, ShuffleClientMetrics metrics,
+			Reporter reporter) throws IOException {
+		 IFileInputStream checksumIn =
+		 new IFileInputStream(input, compressedLength, conf);
 
+		 input = checksumIn;
+
+		// Are map-outputs compressed?
+		//if (codec != null) {
+		//	decompressor.reset();
+			// input = codec.createInputStream(input, decompressor);
+		//}
+
+		try {
+			 IOUtils.readFully(input, memory, 0, memory.length);
+			// MPI code is inserted here
+			try {
+				Intercomm parent = Intercomm.getParent();
+				InetAddress ip = InetAddress.getLocalHost();
+				System.out.println("Fetch from mappers: "
+						+ parent.getRemoteSize() + " - " + ip.getHostName());
+				int node = Integer.parseInt(host.getHostName().replace("slave",
+						""));
+
+				String path = "/tmp/hadoop-mrhpc/nm-local-dir/usercache/mrhpc/appcache/" + host.getBaseUrl().split("=")[1].replace("&reduce", "")
+								+ "/output/" + mapId + "/file.out";
+				CharBuffer message = ByteBuffer.allocateDirect(500)
+						.asCharBuffer();
+				message.put(path.toCharArray());
+				Request request = parent.iSend(message,
+						path.toCharArray().length, MPI.CHAR, node, 99);
+				request.waitFor();
+				// parent.recv(memory, memory.length, MPI.BYTE, node, 99);
+			} catch (MPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			metrics.inputBytes(memory.length);
+			reporter.progress();
+			LOG.info("Read " + memory.length + " bytes from map-output for "
+					+ getMapId());
+			LOG.info("Memory: " + new String(memory));
+			/**
+			 * We've gotten the amount of data we were expecting. Verify the
+			 * decompressor has nothing more to offer. This action also forces
+			 * the decompressor to read any trailing bytes that weren't critical
+			 * for decompression, which is necessary to keep the stream in sync.
+			 */
+			// if (input.read() >= 0 ) {
+			// throw new
+			// IOException("Unexpected extra bytes from input stream for " +
+			// getMapId());
+			// }
+
+		} catch (IOException ioe) {
+			// Close the streams
+			 IOUtils.cleanup(LOG, input);
+
+			// Re-throw
+			throw ioe;
+		} finally {
+			CodecPool.returnDecompressor(decompressor);
+		}
+	}
+  
   @Override
   public void commit() throws IOException {
     merger.closeInMemoryFile(this);

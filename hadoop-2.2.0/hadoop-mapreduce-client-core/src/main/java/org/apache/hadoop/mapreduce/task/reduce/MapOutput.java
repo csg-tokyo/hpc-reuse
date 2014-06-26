@@ -77,6 +77,12 @@ public abstract class MapOutput<K, V> {
                                long decompressedLength,
                                ShuffleClientMetrics metrics,
                                Reporter reporter) throws IOException;
+  
+  public abstract void shuffleMPI(MapHost host, InputStream input, String mapID,
+          long compressedLength,
+          long decompressedLength,
+          ShuffleClientMetrics metrics,
+          Reporter reporter) throws IOException;  
 
   public abstract void commit() throws IOException;
   

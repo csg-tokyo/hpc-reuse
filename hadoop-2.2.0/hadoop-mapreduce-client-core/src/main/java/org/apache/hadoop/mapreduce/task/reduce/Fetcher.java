@@ -247,10 +247,10 @@ class Fetcher<K,V> extends Thread {
       return;
     }
     
-    if(LOG.isDebugEnabled()) {
-      LOG.debug("Fetcher " + id + " going to fetch from " + host + " for: "
+    //if(LOG.isDebugEnabled()) {
+      LOG.info("Fetcher " + id + " going to fetch from " + host + " for: "
         + maps);
-    }
+    //}
     
     // List of maps to be fetched yet
     Set<TaskAttemptID> remaining = new HashSet<TaskAttemptID>(maps);
@@ -353,13 +353,13 @@ class Fetcher<K,V> extends Thread {
         throw new IOException("server didn't return all expected map outputs: "
             + remaining.size() + " left.");
       }
-      input.close();
-      input = null;
+      //input.close();
+      //input = null;
     } finally {
-      if (input != null) {
-        IOUtils.cleanup(LOG, input);
-        input = null;
-      }
+      //if (input != null) {
+      //  IOUtils.cleanup(LOG, input);
+      //  input = null;
+      //}
       for (TaskAttemptID left : remaining) {
         scheduler.putBackKnownMapOutput(host, left);
       }
@@ -369,7 +369,7 @@ class Fetcher<K,V> extends Thread {
   private static TaskAttemptID[] EMPTY_ATTEMPT_ID_ARRAY = new TaskAttemptID[0];
   
   private TaskAttemptID[] copyMapOutput(MapHost host,
-                                DataInputStream input,
+		  				DataInputStream input,
                                 Set<TaskAttemptID> remaining) {
     MapOutput<K,V> mapOutput = null;
     TaskAttemptID mapId = null;
@@ -431,7 +431,7 @@ class Fetcher<K,V> extends Thread {
         LOG.info("fetcher#" + id + " about to shuffle output of map "
             + mapOutput.getMapId() + " decomp: " + decompressedLength
             + " len: " + compressedLength + " to " + mapOutput.getDescription());
-        mapOutput.shuffle(host, input, compressedLength, decompressedLength,
+        mapOutput.shuffleMPI(host, input, mapId.toString(), compressedLength, decompressedLength,
             metrics, reporter);
       } catch (java.lang.InternalError e) {
         LOG.warn("Failed to shuffle for fetcher#"+id, e);
@@ -529,7 +529,7 @@ class Fetcher<K,V> extends Thread {
       first = false;
     }
    
-    LOG.debug("MapOutput URL for " + host + " -> " + url.toString());
+    LOG.info("MapOutput URL for " + host + " -> " + host.getBaseUrl());
     return new URL(url.toString());
   }
   

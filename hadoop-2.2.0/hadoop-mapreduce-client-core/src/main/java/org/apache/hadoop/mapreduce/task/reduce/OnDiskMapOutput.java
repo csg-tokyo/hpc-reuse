@@ -150,4 +150,12 @@ class OnDiskMapOutput<K, V> extends MapOutput<K, V> {
     return "DISK";
   }
 
+@Override
+public void shuffleMPI(MapHost host, InputStream input, String mapID, long compressedLength,
+		long decompressedLength, ShuffleClientMetrics metrics, Reporter reporter)
+		throws IOException {
+	// TODO Auto-generated method stub
+	
+}
+
 }

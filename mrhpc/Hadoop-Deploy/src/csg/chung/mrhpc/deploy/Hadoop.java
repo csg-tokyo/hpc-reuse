@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import mpi.Info;
 import mpi.Intercomm;
@@ -16,6 +18,9 @@ import mpi.Request;
 public class Hadoop {
 	public final static String HADOOP_FOLDER 			= "/home/mrhpc/hadoop";
 	private Intercomm spawn[];
+	private List<Intercomm> mrSpawn;
+	private List<Request> mrRequest;
+	private List<CharBuffer> mrMessage;
 	private int rank, size, numberSlaves;
 	
 	public Hadoop(){
@@ -24,6 +29,9 @@ public class Hadoop {
 			size = MPI.COMM_WORLD.getSize();
 			numberSlaves = size - 1;
 			spawn = new Intercomm[numberSlaves];
+			mrSpawn = new ArrayList<Intercomm>();
+			mrRequest = new ArrayList<Request>();
+			mrMessage = new ArrayList<CharBuffer>();
 			
 			// Print node info
 			InetAddress ip = InetAddress.getLocalHost();
@@ -55,6 +63,16 @@ public class Hadoop {
 							message[i] = ByteBuffer.allocateDirect(500).asCharBuffer();
 							request[i] = spawn[i].iRecv(message[i], 500, MPI.CHAR, 0, Constants.TAG);
 						}
+					}
+					
+					int count = 0;
+					while (count < mrSpawn.size()){
+						if (mrRequest.get(count).test()){
+							String path = mrMessage.get(count).toString().trim();
+							System.out.println("Receive: " + path);
+							// Read file here
+						}
+						count++;
 					}
 				}
 			}
@@ -159,12 +177,14 @@ public class Hadoop {
 			Info info = new Info();
 			info.set("host", host);
 			int error[] = new int[proc];
-			MPI.COMM_WORLD.spawn(cmd, params, proc, info, 0, error);
+			Intercomm spawnChild = MPI.COMM_WORLD.spawn(cmd, params, proc, info, 0, error);
 			if (error[0] == MPI.SUCCESS) {
 				System.out.println("Grand child " + host + " Spawned " + " OK");
-				//String str = "Container at " + host + " started successfully.";
-				//char[] message = str.toCharArray();			
-				//group.send(message, message.length, MPI.CHAR, child, Constants.TAG);					
+				CharBuffer message = ByteBuffer.allocateDirect(500).asCharBuffer();
+				Request request = spawnChild.iRecv(message, 1, MPI.CHAR, 0, Constants.TAG);
+				mrMessage.add(message);
+				mrRequest.add(request);
+				mrSpawn.add(spawnChild);
 			}
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block

@@ -1,5 +1,8 @@
 package csg.chung.mrhpc.deploy;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -68,9 +71,16 @@ public class Hadoop {
 					int count = 0;
 					while (count < mrSpawn.size()){
 						if (mrRequest.get(count).test()){
+							System.out.println("Count: " + count);
 							String path = mrMessage.get(count).toString().trim();
 							System.out.println("Receive: " + path);
+							CharBuffer mes = ByteBuffer.allocateDirect(500).asCharBuffer();
+							Request req = mrSpawn.get(count).iRecv(mes, 500, MPI.CHAR, 0, Constants.TAG);
+							
+							mrMessage.set(count, mes);
+							mrRequest.set(count, req);							
 							// Read file here
+							readAndSend(mrSpawn.get(count), path);
 						}
 						count++;
 					}
@@ -79,6 +89,28 @@ public class Hadoop {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (MPIException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void readAndSend(Intercomm group, String path){
+		try {
+			File file = new File(path);
+			byte[] bytes = new byte[(int) file.length()];
+			FileInputStream fileInputStream = new FileInputStream(file);
+			fileInputStream.read(bytes);
+			fileInputStream.close();	
+			System.out.println("Sending back...");
+			group.send(bytes, bytes.length, MPI.BYTE, 0, Constants.TAG);
+			System.out.println("Sending OK.");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -181,7 +213,7 @@ public class Hadoop {
 			if (error[0] == MPI.SUCCESS) {
 				System.out.println("Grand child " + host + " Spawned " + " OK");
 				CharBuffer message = ByteBuffer.allocateDirect(500).asCharBuffer();
-				Request request = spawnChild.iRecv(message, 1, MPI.CHAR, 0, Constants.TAG);
+				Request request = spawnChild.iRecv(message, 500, MPI.CHAR, 0, Constants.TAG);
 				mrMessage.add(message);
 				mrRequest.add(request);
 				mrSpawn.add(spawnChild);

@@ -146,17 +146,17 @@ class InMemoryMapOutput<K, V> extends MapOutput<K, V> {
 		//}
 
 		try {
-			 IOUtils.readFully(input, memory, 0, memory.length);
+			 //IOUtils.readFully(input, memory, 0, memory.length);
 			// MPI code is inserted here
 			try {
 				Intercomm parent = Intercomm.getParent();
 				InetAddress ip = InetAddress.getLocalHost();
 				System.out.println("Fetch from mappers: "
 						+ parent.getRemoteSize() + " - " + ip.getHostName());
-				int node = Integer.parseInt(host.getHostName().replace("slave",
-						""));
+				LOG.info(host.getHostName());
+				int node = Integer.parseInt(host.getHostName().split(":")[0].replace("slave",""));
 
-				String path = "/tmp/hadoop-mrhpc/nm-local-dir/usercache/mrhpc/appcache/" + host.getBaseUrl().split("=")[1].replace("&reduce", "")
+				String path = "/tmp/hadoop-mrhpc/nm-local-dir/usercache/mrhpc/appcache/" + host.getBaseUrl().split("=")[1].replace("&reduce", "").replace("job", "application")
 								+ "/output/" + mapId + "/file.out";
 				CharBuffer message = ByteBuffer.allocateDirect(500)
 						.asCharBuffer();
@@ -164,7 +164,11 @@ class InMemoryMapOutput<K, V> extends MapOutput<K, V> {
 				Request request = parent.iSend(message,
 						path.toCharArray().length, MPI.CHAR, node, 99);
 				request.waitFor();
-				// parent.recv(memory, memory.length, MPI.BYTE, node, 99);
+				byte bytes[] = new byte[500];
+				parent.recv(bytes, 500, MPI.BYTE, node, 99);
+				for (int i=0; i < memory.length; i++){
+					memory[i] = bytes[i];
+				}
 			} catch (MPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -188,7 +192,7 @@ class InMemoryMapOutput<K, V> extends MapOutput<K, V> {
 
 		} catch (IOException ioe) {
 			// Close the streams
-			 IOUtils.cleanup(LOG, input);
+			// IOUtils.cleanup(LOG, input);
 
 			// Re-throw
 			throw ioe;

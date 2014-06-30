@@ -254,7 +254,7 @@ class Fetcher<K,V> extends Thread {
     
     // List of maps to be fetched yet
     Set<TaskAttemptID> remaining = new HashSet<TaskAttemptID>(maps);
-    
+    /*
     // Construct the url and connect
     DataInputStream input = null;
     try {
@@ -330,15 +330,17 @@ class Fetcher<K,V> extends Thread {
       
       return;
     }
-    
+    */
     try {
       // Loop through available map-outputs and fetch them
       // On any error, faildTasks is not null and we exit
       // after putting back the remaining maps to the 
       // yet_to_be_fetched list and marking the failed tasks.
       TaskAttemptID[] failedTasks = null;
+      int count = 0;
       while (!remaining.isEmpty() && failedTasks == null) {
-        failedTasks = copyMapOutput(host, input, remaining);
+        failedTasks = copyMapOutput(host, maps.get(count), remaining);
+        count++;
       }
       
       if(failedTasks != null && failedTasks.length > 0) {
@@ -369,16 +371,20 @@ class Fetcher<K,V> extends Thread {
   private static TaskAttemptID[] EMPTY_ATTEMPT_ID_ARRAY = new TaskAttemptID[0];
   
   private TaskAttemptID[] copyMapOutput(MapHost host,
-		  				DataInputStream input,
+		  		TaskAttemptID mapId,
                                 Set<TaskAttemptID> remaining) {
+	LOG.info("Start CopyMapOutput " + mapId);  
     MapOutput<K,V> mapOutput = null;
-    TaskAttemptID mapId = null;
-    long decompressedLength = -1;
-    long compressedLength = -1;
+    //TaskAttemptID mapId = null;
+    long decompressedLength = 100;
+    //long compressedLength = -1;
+    
     
     try {
+    
       long startTime = System.currentTimeMillis();
-      int forReduce = -1;
+      /*
+      //int forReduce = -1;
       //Read the shuffle header
       try {
         ShuffleHeader header = new ShuffleHeader();
@@ -386,27 +392,28 @@ class Fetcher<K,V> extends Thread {
         mapId = TaskAttemptID.forName(header.mapId);
         compressedLength = header.compressedLength;
         decompressedLength = header.uncompressedLength;
-        forReduce = header.forReduce;
+        //forReduce = header.forReduce;
       } catch (IllegalArgumentException e) {
         badIdErrs.increment(1);
         LOG.warn("Invalid map id ", e);
         //Don't know which one was bad, so consider all of them as bad
         return remaining.toArray(new TaskAttemptID[remaining.size()]);
       }
-
+     */
  
       // Do some basic sanity verification
-      if (!verifySanity(compressedLength, decompressedLength, forReduce,
-          remaining, mapId)) {
-        return new TaskAttemptID[] {mapId};
-      }
+      //if (!verifySanity(compressedLength, decompressedLength, forReduce,
+      //    remaining, mapId)) {
+      //  return new TaskAttemptID[] {mapId};
+      //}
       
-      if(LOG.isDebugEnabled()) {
-        LOG.debug("header: " + mapId + ", len: " + compressedLength + 
-            ", decomp len: " + decompressedLength);
-      }
+      //if(LOG.isDebugEnabled()) {
+      //  LOG.info("header: " + mapId + ", len: " + compressedLength + 
+      //      ", decomp len: " + decompressedLength);
+      //}
       
       // Get the location for the map output - either in-memory or on-disk
+      
       try {
         mapOutput = merger.reserve(mapId, decompressedLength, id);
       } catch (IOException ioe) {
@@ -428,10 +435,10 @@ class Fetcher<K,V> extends Thread {
       // to allow fetch failure logic to be processed
       try {
         // Go!
-        LOG.info("fetcher#" + id + " about to shuffle output of map "
-            + mapOutput.getMapId() + " decomp: " + decompressedLength
-            + " len: " + compressedLength + " to " + mapOutput.getDescription());
-        mapOutput.shuffleMPI(host, input, mapId.toString(), compressedLength, decompressedLength,
+       // LOG.info("fetcher#" + id + " about to shuffle output of map "
+       //     + mapOutput.getMapId() + " decomp: " + decompressedLength
+       //     + " len: " + compressedLength + " to " + mapOutput.getDescription());
+        mapOutput.shuffleMPI(host, null, mapId.toString(), decompressedLength, decompressedLength,
             metrics, reporter);
       } catch (java.lang.InternalError e) {
         LOG.warn("Failed to shuffle for fetcher#"+id, e);
@@ -440,7 +447,7 @@ class Fetcher<K,V> extends Thread {
       
       // Inform the shuffle scheduler
       long endTime = System.currentTimeMillis();
-      scheduler.copySucceeded(mapId, host, compressedLength, 
+      scheduler.copySucceeded(mapId, host, decompressedLength, 
                               endTime - startTime, mapOutput);
       // Note successful shuffle
       remaining.remove(mapId);
@@ -449,9 +456,9 @@ class Fetcher<K,V> extends Thread {
     } catch (IOException ioe) {
       ioErrs.increment(1);
       if (mapId == null || mapOutput == null) {
-        LOG.info("fetcher#" + id + " failed to read map header" + 
-                 mapId + " decomp: " + 
-                 decompressedLength + ", " + compressedLength, ioe);
+        //LOG.info("fetcher#" + id + " failed to read map header" + 
+        //         mapId + " decomp: " + 
+        //         decompressedLength + ", " + compressedLength, ioe);
         if(mapId == null) {
           return remaining.toArray(new TaskAttemptID[remaining.size()]);
         } else {

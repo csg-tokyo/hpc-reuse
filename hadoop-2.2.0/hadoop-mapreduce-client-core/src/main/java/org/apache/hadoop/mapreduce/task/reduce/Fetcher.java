@@ -379,7 +379,6 @@ class Fetcher<K,V> extends Thread {
     long decompressedLength = 100;
     //long compressedLength = -1;
     
-    
     try {
     
       long startTime = System.currentTimeMillis();

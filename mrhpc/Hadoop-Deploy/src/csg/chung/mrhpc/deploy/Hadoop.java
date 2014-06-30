@@ -100,7 +100,10 @@ public class Hadoop {
 			FileInputStream fileInputStream = new FileInputStream(file);
 			fileInputStream.read(bytes);
 			fileInputStream.close();	
-			System.out.println("Sending back...");
+			System.out.println("Sending back... --> Length: " + bytes.length);
+			int length[] = new int[1];
+			length[0] = bytes.length;
+			group.send(length, 1, MPI.INT, 0, Constants.TAG);
 			group.send(bytes, bytes.length, MPI.BYTE, 0, Constants.TAG);
 			System.out.println("Sending OK.");
 		} catch (FileNotFoundException e) {

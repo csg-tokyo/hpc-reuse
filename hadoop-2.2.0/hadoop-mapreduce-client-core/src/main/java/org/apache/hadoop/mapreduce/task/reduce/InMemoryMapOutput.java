@@ -54,7 +54,7 @@ class InMemoryMapOutput<K, V> extends MapOutput<K, V> {
   private static final Log LOG = LogFactory.getLog(InMemoryMapOutput.class);
   private Configuration conf;
   private final MergeManagerImpl<K, V> merger;
-  private final byte[] memory;
+  private byte[] memory;
   private BoundedByteArrayOutputStream byteStream;
   // Decompression of map-outputs
   private final CompressionCodec codec;
@@ -152,11 +152,14 @@ class InMemoryMapOutput<K, V> extends MapOutput<K, V> {
 				Request request = parent.iSend(message,
 						path.toCharArray().length, MPI.CHAR, node, 99);
 				request.waitFor();
-				byte bytes[] = new byte[500];
-				parent.recv(bytes, 500, MPI.BYTE, node, 99);
-				for (int i=0; i < memory.length; i++){
-					memory[i] = bytes[i];
-				}
+				int length[] = new int[1];
+				parent.recv(length, 1, MPI.INT, node, 99);
+				LOG.info("Length " + length[0]);
+				memory = new byte[length[0]];
+				parent.recv(memory, length[0], MPI.BYTE, node, 99);
+				//for (int i=0; i < memory.length; i++){
+				//	memory[i] = bytes[i];
+				//}
 			} catch (MPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

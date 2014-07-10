@@ -2,7 +2,6 @@ package csg.chung.mrhpc.deploy.test;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 
 import mpi.MPI;
 import mpi.MPIException;

@@ -26,6 +26,7 @@ public class SpawnTest {
 		System.out.println("Rank: " + rank + " starts spawning");
 		String params[] = {"csg.chung.mrhpc.deploy.test.SpawnChild"};
 		Info info = new Info();
+		info.set("host", "localhost");
 		MPI.COMM_WORLD.spawn("java", params, 1, info, 0, null);
 	}
 	

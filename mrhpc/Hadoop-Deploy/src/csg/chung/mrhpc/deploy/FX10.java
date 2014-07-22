@@ -75,6 +75,8 @@ public class FX10 {
 					for (int i = 0; i < numberSlaves; i++) {
 						if (request[i].test()){
 							String cmd = message[i].toString().trim();
+							//cmd = cmd.replace("default_container_executor.sh", "launch_container.sh");
+							runCommand("sed -i.bak 's/setsid //g' " + cmd);
 							System.out.println("slave" + (i+1) + " start spawning Grand Child: " + cmd);
 							spawnGrandChild(cmd, spawn[i], 0, "slave" + (i+1));
 							message[i] = ByteBuffer.allocateDirect(500).asCharBuffer();
@@ -104,6 +106,9 @@ public class FX10 {
 			e.printStackTrace();
 		} catch (MPIException e) {
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -111,7 +116,7 @@ public class FX10 {
 		try {
 			String commands[] = new String[numberSlaves];
 			for (int i = 0; i < numberSlaves; i++) {
-				commands[i] = FX10.HADOOP_FOLDER + masterRank + "/sbin/yarn-daemon.sh";
+				commands[i] = FX10.HADOOP_FOLDER + masterRank + "/sbin/yarn-daemon-nodemanager.sh";
 				//commands[i] = "java";
 			}
 
@@ -231,8 +236,9 @@ public class FX10 {
 			}
 			
 			runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/hadoop-daemon.sh start namenode");
-			runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/yarn-daemon.sh start resourcemanager");
 			System.out.println("Start NameNode --> OK");
+			runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/yarn-daemon.sh start resourcemanager");
+			System.out.println("Start Resource Manager --> OK");
 			
 			// Send master address to DataNode
 			 char[] message = ip.getHostAddress().toCharArray();
@@ -314,9 +320,13 @@ public class FX10 {
 			String mpiJar = Configure.DEPLOY_FOLDER + "/openmpi/lib/mpi.jar";
 			runCommand("sed -i.bak 's/MRHPC_OPENMPI_MPI_JAR/" + mpiJar.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/yarn-env.sh");			
 			runCommand("sed -i.bak 's/MRHPC_MASTER/" + masterAddress + "/g' " + HADOOP_INSTALL + "/etc/hadoop/yarn-site.xml");
-		
+			runCommand("sed -i.bak 's/MRHPC_HADOOP_CONF_DIR/" + HADOOP_CONF_DIR.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/yarn-site.xml");						
+			runCommand("sed -i.bak 's/MRHPC_HADOOP_INSTALL/" + HADOOP_INSTALL.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/yarn-site.xml");
+			runCommand("sed -i.bak 's/MRHPC_OPENMPI_MPI_JAR/" + mpiJar.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/yarn-site.xml");						
+			
 			// MAP-REDUCE
 			runCommand("sed -i.bak 's/MRHPC_OPENMPI_JAVA_LIB/" + OPENMPI_JAVA_LIB.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/mapred-site.xml");
+			runCommand("sed -i.bak 's/MRHPC_HADOOP_INSTALL/" + HADOOP_INSTALL.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/mapred-site.xml");			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

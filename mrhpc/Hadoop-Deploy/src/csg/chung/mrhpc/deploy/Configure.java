@@ -26,7 +26,7 @@ public class Configure {
 	/**
 	 * Running time for Hadoop cluster
 	 */
-	public final static String ELAPSED_TIME				= "00:15:00";
+	public final static String ELAPSED_TIME				= "00:30:00";
 	/**
 	 * Number of node used for deploying
 	 */
@@ -34,7 +34,7 @@ public class Configure {
 	/**
 	 * Number of node for data storage. Keep two if you do not know exactly what is it.
 	 */
-	public final static int NUMBER_OF_DATANODE			= 2;
+	public final static int NUMBER_OF_DATANODE			= 1;
 	
-	public final static int NUMBER_OF_NODEMANAGER		= 3;
+	public final static int NUMBER_OF_NODEMANAGER		= 1;
 }

@@ -24,10 +24,10 @@ public class SpawnTest {
 	
 	public void testSpawn() throws MPIException{
 		System.out.println("Rank: " + rank + " starts spawning");
-		String params[] = {"csg.chung.mrhpc.deploy.test.SpawnChild"};
+		String params[] = {};
 		Info info = new Info();
-		info.set("host", "localhost");
-		MPI.COMM_WORLD.spawn("java", params, 1, info, 0, null);
+		//info.set("host", "localhost");
+		MPI.COMM_WORLD.spawn("./spawn.sh", params, 3, info, 0, null);
 	}
 	
 	public void spawnOnSlaves() {

@@ -12,8 +12,8 @@ public class SpawnTest {
 	
 	public SpawnTest() throws MPIException, UnknownHostException{
 		rank = MPI.COMM_WORLD.getRank();
-		size = MPI.COMM_WORLD.getSize();
-		numberSlaves = size - 1;
+		//size = MPI.COMM_WORLD.getSize();
+		//numberSlaves = size - 1;
 		
 		InetAddress ip = InetAddress.getLocalHost();
 		System.out.println("Parent " + rank + ": " + ip.getHostName()
@@ -23,11 +23,17 @@ public class SpawnTest {
 	}
 	
 	public void testSpawn() throws MPIException{
-		System.out.println("Rank: " + rank + " starts spawning");
-		String params[] = {};
+		String params[] = {"csg.chung.mrhpc.deploy.test.SpawnChild"};
 		Info info = new Info();
-		//info.set("host", "localhost");
-		MPI.COMM_WORLD.spawn("./spawn.sh", params, 3, info, 0, null);
+		long start = 0;
+		if (rank == 0){
+			System.out.println("Rank: " + rank + " starts spawning");
+			start = System.currentTimeMillis();
+		}
+		MPI.COMM_WORLD.spawn("java", params, 1, info, 0, null);
+		if (rank == 0){
+			System.out.println("Spawning time of size " + size + ": " + (System.currentTimeMillis() - start));
+		}
 	}
 	
 	public void spawnOnSlaves() {

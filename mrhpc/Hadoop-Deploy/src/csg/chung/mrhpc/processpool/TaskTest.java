@@ -1,8 +1,8 @@
 package csg.chung.mrhpc.processpool;
 
-public class Task {
+public class TaskTest {
 
-	public Task(){
+	public TaskTest(){
 		int count = 0;
 		while (count < 5){
 			System.out.println(count++);
@@ -16,7 +16,7 @@ public class Task {
 	}
 	
 	public static void main(String args[]){
-		System.out.println("This is the Task class 123");
-		new Task();
+		System.out.println("This is the Task class");
+		new TaskTest();
 	}
 }

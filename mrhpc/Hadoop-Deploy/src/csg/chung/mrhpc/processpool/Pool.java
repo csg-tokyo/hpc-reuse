@@ -22,6 +22,32 @@ public class Pool {
 			String className = "org.apache.hadoop.yarn.server.nodemanager.NodeManager";	
 			startNewProcess(prop, className);
 		}
+		waiting();
+	}
+	
+	public void waiting() {
+		try {
+			Request request;
+			CharBuffer message;
+			message = ByteBuffer.allocateDirect(Constants.BYTE_BUFFER_LENGTH).asCharBuffer();
+			request = MPI.COMM_WORLD.iRecv(message, Constants.BYTE_BUFFER_LENGTH, MPI.CHAR, MPI.ANY_SOURCE,
+					Constants.TAG);
+			while (true) {
+				if (request.test()) {
+					String cmd = message.toString().trim();
+					cmd = cmd.replace("default_container_executor.sh", "launch_container.sh");
+					System.out.println(rank + " recv: " + cmd);
+					startNewProcess(cmd, "");
+					
+					message = ByteBuffer.allocateDirect(Constants.BYTE_BUFFER_LENGTH).asCharBuffer();
+					request = MPI.COMM_WORLD.iRecv(message, Constants.BYTE_BUFFER_LENGTH, MPI.CHAR, MPI.ANY_SOURCE,
+							Constants.TAG);
+				}
+			}
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void startNewProcess(String prop, String className){

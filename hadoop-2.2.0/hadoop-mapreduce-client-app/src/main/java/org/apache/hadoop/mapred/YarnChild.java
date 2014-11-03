@@ -67,7 +67,7 @@ import org.apache.log4j.LogManager;
 /**
  * The main() for MapReduce task processes.
  */
-class YarnChild {
+public class YarnChild {
 
   private static final Log LOG = LogFactory.getLog(YarnChild.class);
 
@@ -77,7 +77,7 @@ class YarnChild {
   	// MPI code is inserted here
 	LOG.info("MPI is initializing...");    
 	String params[] = {};
-  	MPI.Init(params);
+  	//MPI.Init(params);
   	int rank = MPI.COMM_WORLD.getRank();
 	LOG.info("Start MPI with rank " + rank + " at YarnChild");    	 
 	

@@ -66,7 +66,6 @@ import org.apache.hadoop.yarn.util.ConverterUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 
-
 public class DefaultContainerExecutor extends ContainerExecutor {
 
   private static final Log LOG = LogFactory
@@ -207,7 +206,8 @@ public class DefaultContainerExecutor extends ContainerExecutor {
           container.getLaunchContext().getEnvironment());      // sanitized env
       if (isContainerActive(containerId)) {
     	  		// MPI code is inserted here
-				try {
+    	  		/*
+    	  		try {
 					Intercomm parent = Intercomm.getParent();
 					InetAddress ip = InetAddress.getLocalHost();
 					System.out.println("Parent size 123: " + parent.getRemoteSize() + " - " + ip.getHostName());
@@ -220,6 +220,16 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				*/
+	  		try {    	  
+    	  		int NUMBER_PROCESS_EACH_NODE = 5;
+    	  		int rank = MPI.COMM_WORLD.getRank();
+    	  		int parent = (int)(rank/NUMBER_PROCESS_EACH_NODE) * NUMBER_PROCESS_EACH_NODE;    	  		
+    	  		sendSpawnToParent(parent, command[command.length - 1]);
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    	  		
 				System.out.println("start start waiting for completion" + Arrays.toString(command));
 				for (;;){
 					
@@ -276,11 +286,11 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 		}				  		
   	}
   
-	public void sendSpawnToParent(Intercomm group, int parent, String cmd){
+	public void sendSpawnToParent(int parent, String cmd){
 		try {
 			CharBuffer message = ByteBuffer.allocateDirect(500).asCharBuffer();
 			message.put(cmd.toCharArray());	
-			Request request = group.iSend(message, cmd.toCharArray().length, MPI.CHAR, parent, 99);	
+			Request request = MPI.COMM_WORLD.iSend(message, cmd.toCharArray().length, MPI.CHAR, parent, 99);	
 			request.waitFor();
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block

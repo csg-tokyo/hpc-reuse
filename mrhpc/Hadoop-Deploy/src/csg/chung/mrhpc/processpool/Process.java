@@ -43,7 +43,11 @@ public class Process {
 					}
 					
 					if (cmd == Pool.CMD_RUN_CLASS){
-						task = new TaskThread(split[1], split[2]);
+						if (split.length >= 3){
+							task = new TaskThread(split[1], split[2]);
+						}else{
+							task = new TaskThread(split[1]);
+						}
 						task.start();	
 						sendAck(parent, ACK_OK);
 					}

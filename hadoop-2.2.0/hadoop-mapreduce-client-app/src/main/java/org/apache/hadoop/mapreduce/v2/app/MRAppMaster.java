@@ -1322,7 +1322,7 @@ public class MRAppMaster extends CompositeService {
     try {
     	// MPI code is inserted here
     	String params[] = {};
-    	MPI.Init(params);
+    	//MPI.Init(params);
 		int rank = MPI.COMM_WORLD.getRank();
 		LOG.info("Start MPI with rank " + rank + " at MRAppMaster");    
 		

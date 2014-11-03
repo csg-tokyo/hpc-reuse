@@ -386,25 +386,22 @@ public class NodeManager extends CompositeService
 
   public static void main(String[] args) {
 	  // MPI code is inserted here
-	  try {
-		MPI.Init(args);
-		int rank = MPI.COMM_WORLD.getRank();
-		LOG.info("Start MPI with rank " + rank + " at Nodemanager");
+		int rank;
+		try {
+			rank = MPI.COMM_WORLD.getRank();
+			System.out.println("Start MPI with rank " + rank + " at Nodemanager");
+			LOG.info("Start MPI with rank " + rank + " at Nodemanager");
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 				
 	    Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
 	    StringUtils.startupShutdownMessage(NodeManager.class, args, LOG);
 	    NodeManager nodeManager = new NodeManager();
 	    Configuration conf = new YarnConfiguration();
 	    setHttpPolicy(conf);
-	    nodeManager.initAndStartNodeManager(conf, false);
-	    	    
-	    /* Finalize should be called somewhere else, not here since it might shutdown MPI */
-	    //LOG.info("Finish MPI with rank " + rank + " at Nodemanager");
-	    //MPI.Finalize();		
-	} catch (MPIException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	    nodeManager.initAndStartNodeManager(conf, false);	    	    
   }
   
   private static void setHttpPolicy(Configuration conf) {

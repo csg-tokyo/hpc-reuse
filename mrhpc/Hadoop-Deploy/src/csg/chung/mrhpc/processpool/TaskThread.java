@@ -12,6 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import mpi.MPI;
+
 import csg.chung.mrhpc.utils.Environment;
 import csg.chung.mrhpc.utils.Lib;
 
@@ -118,6 +120,8 @@ public class TaskThread extends Thread {
 			Method mainMethod = hello.getMethod("main", String[].class);
 			Object[] arguments = new Object[] {args};
 			mainMethod.invoke(null, arguments);
+			Thread.currentThread().setName("NodeManager");
+			System.out.println(MPI.COMM_WORLD.getRank() + " thread ID: " + Thread.currentThread().getId());
 			for(;;);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

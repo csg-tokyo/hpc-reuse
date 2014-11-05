@@ -23,6 +23,7 @@ public class TaskThread extends Thread {
 	boolean startArg;
 	String args[];
 	int count;
+	String exe;
 	
 	public TaskThread(String prop, String name) {
 		this.properties = prop;
@@ -63,6 +64,7 @@ public class TaskThread extends Thread {
 		}else
 		if (line.startsWith("exec")){
 			for (int i=0; i < split.length; i++){
+				exe = split[i];
 				startJava(split[i]);
 			}
 		}else{
@@ -115,6 +117,8 @@ public class TaskThread extends Thread {
 			//"org.apache.hadoop.yarn.server.nodemanager.NodeManager"
 			
 			//System.out.println(properties + " " + className);
+			System.out.println("Script");
+			System.out.println(exe);
 			Class<?> hello = Class.forName(className);
 
 			Method mainMethod = hello.getMethod("main", String[].class);
@@ -122,7 +126,6 @@ public class TaskThread extends Thread {
 			mainMethod.invoke(null, arguments);
 			Thread.currentThread().setName("NodeManager");
 			System.out.println(MPI.COMM_WORLD.getRank() + " thread ID: " + Thread.currentThread().getId());
-			for(;;);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

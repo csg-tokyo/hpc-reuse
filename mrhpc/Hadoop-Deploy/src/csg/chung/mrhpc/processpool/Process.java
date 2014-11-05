@@ -12,30 +12,33 @@ public class Process {
 	public static final int ACK_OK = 0;
 	public static final int ACK_FREE = 1;
 	public static final int ACK_BUSY = 2;
-	private TaskThread task;
 	private int rank;
 	private int parent;
+	private int numberThread;
 	
 	public Process(int rank){
 		this.rank = rank;
 		this.parent = (int)(rank/Startup.NUMBER_PROCESS_EACH_NODE) * Startup.NUMBER_PROCESS_EACH_NODE;
-		this.task = null;
+		this.numberThread = 0;
 	}
 	
 	public void waiting() {
+		TaskThread t = null;
+		
 		try {
 			Request request;
 			CharBuffer message;
 			message = ByteBuffer.allocateDirect(Constants.BYTE_BUFFER_LENGTH).asCharBuffer();
 			request = MPI.COMM_WORLD.iRecv(message, Constants.BYTE_BUFFER_LENGTH, MPI.CHAR, parent,
 					Constants.TAG);
+			numberThread = getCurrentNumberThread();
 			while (true) {
 				if (request.test()) {
 					String split[] = message.toString().trim().split(Constants.SPLIT_REGEX);
 					int cmd = Integer.parseInt(split[0]);
 					
 					if (cmd == Pool.CMD_CHECK_FREE){
-						if (task == null || !task.isAlive()){
+						if (getCurrentNumberThread() <= numberThread){
 							sendAck(parent, ACK_FREE);
 						}else{
 							sendAck(parent, ACK_BUSY);
@@ -43,12 +46,18 @@ public class Process {
 					}
 					
 					if (cmd == Pool.CMD_RUN_CLASS){
-						if (split.length >= 3){
-							task = new TaskThread(split[1], split[2]);
-						}else{
-							task = new TaskThread(split[1]);
+						if (t != null){
+							t.destroy();
 						}
-						task.start();	
+						if (split.length >= 3){
+							System.out.println("Start new 1");
+							t = new TaskThread(split[1], split[2]);
+							t.start();
+						}else{
+							System.out.println("Start new 2");							
+							t = new TaskThread(split[1]);
+							t.start();
+						}
 						sendAck(parent, ACK_OK);
 					}
 					message = ByteBuffer.allocateDirect(Constants.BYTE_BUFFER_LENGTH).asCharBuffer();
@@ -60,6 +69,11 @@ public class Process {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public int getCurrentNumberThread(){
+		System.out.println(rank + " number of thread: " + Thread.currentThread().getThreadGroup().activeCount());
+		return Thread.currentThread().getThreadGroup().activeCount();		
 	}
 	
 	public void sendAck(int des, int msg){

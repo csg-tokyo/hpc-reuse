@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,15 +112,17 @@ public class TaskThread extends Thread {
 	public void run() {
 		try {
 			//String path = "/home/mrhpc/hadoop/etc/hadoop:/home/mrhpc/hadoop/etc/hadoop:.:/home/mrhpc/hadoop/etc/hadoop:/home/mrhpc/hadoop/share/hadoop/common/lib/*:/home/mrhpc/hadoop/share/hadoop/common/*:/home/mrhpc/hadoop/share/hadoop/hdfs:/home/mrhpc/hadoop/share/hadoop/hdfs/lib/*:/home/mrhpc/hadoop/share/hadoop/hdfs/*:/home/mrhpc/hadoop/share/hadoop/yarn/lib/*:/home/mrhpc/hadoop/share/hadoop/yarn/*:/home/mrhpc/hadoop/share/hadoop/mapreduce/lib/*:/home/mrhpc/hadoop/share/hadoop/mapreduce/*:/contrib/capacity-scheduler/*.jar:/contrib/capacity-scheduler/*.jar:/home/mrhpc/usr/lib/mpi.jar:/home/mrhpc/test:/home/mrhpc/test/guava-17.0.jar:/home/mrhpc/test/commons-codec-1.9.jar:/home/mrhpc/hadoop/share/hadoop/yarn/*:/home/mrhpc/hadoop/share/hadoop/yarn/lib/*:/home/mrhpc/hadoop/etc/hadoop/nm-config/log4j.properties";
-			//URL[] classpathExt = buildClasspath(path);
-			//URLClassLoader loader = new URLClassLoader(classpathExt, null);
+			int parent = (int)(MPI.COMM_WORLD.getRank()/Startup.NUMBER_PROCESS_EACH_NODE) * Startup.NUMBER_PROCESS_EACH_NODE;
+			String hadoopFolder = FX10.HADOOP_FOLDER + parent; 
+			URL[] classpathExt = buildClasspath(setClasspath(hadoopFolder));
+			URLClassLoader loader = new URLClassLoader(classpathExt, null);
 			//String prop = "-Dhadoop.log.dir=/home/mrhpc/hadoop/logs -Dyarn.log.dir=/home/mrhpc/hadoop/logs -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.home.dir= -Dyarn.id.str=mrhpc -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA -Dyarn.policy.file=hadoop-policy.xml -server -Dhadoop.log.dir=/home/mrhpc/hadoop/logs -Dyarn.log.dir=/home/mrhpc/hadoop/logs -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.home.dir=/home/mrhpc/hadoop -Dhadoop.home.dir=/home/mrhpc/hadoop -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA";
 			//"org.apache.hadoop.yarn.server.nodemanager.NodeManager"
 			
 			//System.out.println(properties + " " + className);
-			System.out.println("Script");
-			System.out.println(exe);
-			Class<?> hello = Class.forName(className);
+			System.out.println("Classpath: " + setClasspath(hadoopFolder));
+			System.out.println("Classpath: " + classpathExt.toString());			
+			Class<?> hello = Class.forName(className, true, loader);
 
 			Method mainMethod = hello.getMethod("main", String[].class);
 			Object[] arguments = new Object[] {args};
@@ -132,6 +135,14 @@ public class TaskThread extends Thread {
 		}
 	}
 
+	public String setClasspath(String home){
+		String classpath = 	"/home/mrhpc/hadoop/etc/hadoop:/home/mrhpc/hadoop/etc/hadoop:.:/home/mrhpc/hadoop/etc/hadoop:/home/mrhpc/hadoop/share/hadoop/common/lib/*:/home/mrhpc/hadoop/share/hadoop/common/*:/home/mrhpc/hadoop/share/hadoop/hdfs:/home/mrhpc/hadoop/share/hadoop/hdfs/lib/*:/home/mrhpc/hadoop/share/hadoop/hdfs/*:/home/mrhpc/hadoop/share/hadoop/yarn/lib/*:/home/mrhpc/hadoop/share/hadoop/yarn/*:/home/mrhpc/hadoop/share/hadoop/mapreduce/lib/*:/home/mrhpc/hadoop/share/hadoop/mapreduce/*:/contrib/capacity-scheduler/*.jar:/contrib/capacity-scheduler/*.jar:" + 
+							"/home/mrhpc/hadoop/share/hadoop/yarn/*:/home/mrhpc/hadoop/share/hadoop/yarn/lib/*:/home/mrhpc/hadoop/etc/hadoop/nm-config/log4j.properties:";
+		classpath = classpath.replaceAll("/home/mrhpc/hadoop", home);
+		return classpath;
+		//Environment.setenv("CLASSPATH", classpath, true);
+	}	
+	
 	public void setSystem(String input){
 		String libs[] = input.split(" ");
 		for (int i=0; i < libs.length; i++){
@@ -150,7 +161,7 @@ public class TaskThread extends Thread {
 			File dir = new File(libs[i]);
 			File[] listFile = dir.listFiles();
 			if (listFile != null){
-				System.out.println(libs[i] + ": " + listFile.length);
+				//System.out.println(libs[i] + ": " + listFile.length);
 				for (int j = 0; j < listFile.length; j++) {
 					if (listFile[j].getName().endsWith(".jar")) {
 						//System.out.println(listFile[j]);

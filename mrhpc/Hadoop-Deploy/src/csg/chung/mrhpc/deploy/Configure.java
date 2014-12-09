@@ -5,15 +5,15 @@ public class Configure {
 	/**
 	 * Running file
 	 */
-	public final static String HADOOP_TAR_GZ_FILE 		= "/group1/gc83/c83014/hadoopmpi/deploy/hadoop.tar.gz";
-	public final static String OPENMPI_JAVA_LIB 		= "/group1/gc83/c83014/hadoopmpi/deploy/openmpi.tar.gz";	
-	public final static String DEPLOY_JAR 				= "/group1/gc83/c83014/hadoopmpi/deploy/deploy.jar";
+	public final static String HADOOP_TAR_GZ_FILE 		= "/mppxb/c83014/hadoopmpi/deploy/hadoop.tar.gz";
+	public final static String OPENMPI_JAVA_LIB 		= "/mppxb/c83014/hadoopmpi/deploy/openmpi.tar.gz";	
+	public final static String DEPLOY_JAR 				= "/mppxb/c83014/hadoopmpi/deploy/deploy.jar";
 	
 	/**
 	 * Deploying directory for whole data: source code, storage, logs, and so on. 
 	 * Note: don't add / in the end of the path
 	 */
-	public final static String DEPLOY_FOLDER 			= "/group1/gc83/c83014/hadoopmpi/deploy";
+	public final static String DEPLOY_FOLDER 			= "/mppxb/c83014/hadoopmpi/deploy";
 	/**
 	 * Java home path. "/usr/local/java/openjdk7" is JAVA_HOME on FX10.
 	 */

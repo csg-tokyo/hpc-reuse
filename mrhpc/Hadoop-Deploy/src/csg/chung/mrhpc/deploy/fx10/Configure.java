@@ -5,7 +5,7 @@ public class Configure {
 	/**
 	 * Deploying directory for whole data: source code, storage, logs, and so on.
 	 */
-	public final static String DEPLOY_FOLDER 			= "/group1/gc83/c83014/mrhpc/deploy";
+	public final static String DEPLOY_FOLDER 			= "/mppxb/c83014/mrhpc/deploy";
 	/**
 	 * Java home path. "/usr/local/java/openjdk7" is JAVA_HOME on FX10.
 	 */
@@ -22,7 +22,7 @@ public class Configure {
 	/**
 	 * Number of node used for deploying
 	 */
-	public final static int NUMBER_OF_NODE				= 6;
+	public final static int NUMBER_OF_NODE				= 10;
 	/**
 	 * Number of node for data storage. Keep two if you do not know exactly what is it.
 	 */

@@ -42,7 +42,7 @@ public class FX10 {
 			if (rank > 0){
 				String hadoopFolder = HADOOP_FOLDER + rank; 
 				String logFolder = hadoopFolder + "/logs"; 				
-				String prop = 	"-Dhadoop.log.dir=" + logFolder + " -Dyarn.log.dir=" + logFolder + 
+				String prop = 	"-Dhostname=" + Lib.getHostname() + " -Dhadoop.log.dir=" + logFolder + " -Dyarn.log.dir=" + logFolder + 
 								" -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave" + rank + ".log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave" + rank + ".log -Dyarn.home.dir= -Dyarn.id.str=mrhpc -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA -Dyarn.policy.file=hadoop-policy.xml -server -Dyarn.home.dir=" + hadoopFolder + 
 								" -Dhadoop.home.dir=" + hadoopFolder + " -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA";
 				String className = "org.apache.hadoop.yarn.server.nodemanager.NodeManager";	
@@ -141,10 +141,15 @@ public class FX10 {
 	 * @param masterAddress
 	 */
 	public void generateCode(int rank, String masterAddress){
-		File folder = new File(FX10.DATA_FOLDER + rank);
-		if (!folder.exists()){
+		File dataFolder = new File(FX10.DATA_FOLDER + rank);
+		if (!dataFolder.exists()){
 			Lib.runCommand("mkdir " + DATA_FOLDER + rank);
 		}
+		
+		File tmpFolder = new File(FX10.TMP_FOLDER + Lib.getHostname());
+		if (!tmpFolder.exists()){
+			Lib.runCommand("mkdir " + FX10.TMP_FOLDER + Lib.getHostname());
+		}		
 			
 		Lib.runCommand("tar -zxf " + Configure.HADOOP_TAR_GZ_FILE + " --directory=" + FX10.HADOOP_FOLDER + " --transform s/hadoop/" + rank + "/");
 		String HADOOP_INSTALL = FX10.HADOOP_FOLDER + rank;
@@ -158,7 +163,7 @@ public class FX10 {
 		// CORE
 		Lib.runCommand("sed -i.bak 's/MRHPC_MASTER/" + masterAddress + "/g' " + HADOOP_INSTALL + "/etc/hadoop/core-site.xml");
 		Lib.runCommand("sed -i.bak 's/MRHPC_USERNAME/" + Configure.USERNAME + "/g' " + HADOOP_INSTALL + "/etc/hadoop/core-site.xml");
-		Lib.runCommand("sed -i.bak 's/MRHPC_TMP_FOLDER/" + TMP_FOLDER.replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/core-site.xml");
+		Lib.runCommand("sed -i.bak 's/MRHPC_TMP_FOLDER/" + (TMP_FOLDER + "${hostname}" ).replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/core-site.xml");
 			
 		// HDFS
 		Lib.runCommand("sed -i.bak 's/MRHPC_DATA_FOLDER/" + DATA_FOLDER.replaceAll("/", "\\\\/") + rank + "/g' " + HADOOP_INSTALL + "/etc/hadoop/hdfs-site.xml");

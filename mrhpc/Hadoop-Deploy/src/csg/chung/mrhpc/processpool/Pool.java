@@ -15,6 +15,7 @@ public class Pool {
 	public static final int CMD_CHECK_FREE = 0;
 	public static final int CMD_RUN_CLASS = 1;
 	private int rank;
+	private int busyCount = 0;
 	
 	public Pool(int rank){
 		this.rank = rank;
@@ -50,12 +51,13 @@ public class Pool {
 		if (des != NO_AVAILABLE_SLOT){
 			request(Lib.buildCommand(CMD_RUN_CLASS, prop, className), des);
 			int ack = waitAck(des);
-			System.out.println("Ack from " + des + ": " + (ack == Process.ACK_OK ? "Run OK":"Run failed"));			
+			System.out.println("Ack from " + des + ": " + (ack == Process.ACK_OK ? "Run OK":"Run failed"));	
+			busyCount++;
 		}
 	}
 	
 	public int getFreeSLot(){
-		for (int i=rank + 1; i < rank + Startup.NUMBER_PROCESS_EACH_NODE; i++){
+		for (int i=rank + 1 + busyCount; i < rank + Startup.NUMBER_PROCESS_EACH_NODE; i++){
 			request(CMD_CHECK_FREE + "", i);
 			int ack = waitAck(i);
 			System.out.println("Ack from " + i + ": " + (ack == Process.ACK_FREE ? "Free":"Busy"));

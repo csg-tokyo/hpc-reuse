@@ -45,7 +45,7 @@ public class TaskThread extends Thread {
 			String line;
 			in.readLine();
 			while ((line=in.readLine()) != null){
-				System.out.println(line);
+				//System.out.println(line);
 				lineAnalyze(line);
 			}
 			in.close();
@@ -57,14 +57,14 @@ public class TaskThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println(this.className);
+		//System.out.println(this.className);
 	}
 	
 	public void makeJobDir(){
 		home = FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank();
-		System.out.println("Make dir: " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
+		//System.out.println("Make dir: " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
 		Lib.runCommand("mkdir " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());		
-		System.out.println("User dir:" + System.getProperty("user.dir"));
+		//System.out.println("User dir:" + System.getProperty("user.dir"));
 		System.setProperty("user.dir", FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
 		System.out.println("User dir:" + System.getProperty("user.dir"));
 	}
@@ -89,7 +89,7 @@ public class TaskThread extends Thread {
 	}
 	
 	public void startJava(String str){
-		System.out.println(str);
+		//System.out.println(str);
 		if (str.startsWith("-D")){
 			String values[] = str.split("=");
 			System.setProperty(values[0].substring(2), values.length == 1 ? "":values[1]);			

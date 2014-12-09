@@ -44,22 +44,23 @@ public class Process {
 							sendAck(parent, ACK_BUSY);
 						}
 					}
-					
+					long time = System.currentTimeMillis();
 					if (cmd == Pool.CMD_RUN_CLASS){
 						if (t != null){
 							t.destroy();
 						}
 						if (split.length >= 3){
-							System.out.println("Start new 1");
+							//System.out.println("Start new 1");
 							t = new TaskThread(split[1], split[2]);
 							t.start();
 						}else{
-							System.out.println("Start new 2");							
+							//System.out.println("Start new 2");							
 							t = new TaskThread(split[1]);
 							t.start();
 						}
 						sendAck(parent, ACK_OK);
 					}
+					System.out.println(MPI.COMM_WORLD.getRank() + " new TaskThread" + " --> " + (System.currentTimeMillis() - time));
 					message = ByteBuffer.allocateDirect(Constants.BYTE_BUFFER_LENGTH).asCharBuffer();
 					request = MPI.COMM_WORLD.iRecv(message, Constants.BYTE_BUFFER_LENGTH, MPI.CHAR, parent,
 							Constants.TAG);
@@ -72,7 +73,7 @@ public class Process {
 	}
 	
 	public int getCurrentNumberThread(){
-		System.out.println(rank + " number of thread: " + Thread.currentThread().getThreadGroup().activeCount());
+		//System.out.println(rank + " number of thread: " + Thread.currentThread().getThreadGroup().activeCount());
 		return Thread.currentThread().getThreadGroup().activeCount();		
 	}
 	

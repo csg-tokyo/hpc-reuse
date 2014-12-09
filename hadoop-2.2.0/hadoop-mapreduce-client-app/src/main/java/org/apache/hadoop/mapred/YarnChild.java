@@ -74,6 +74,7 @@ public class YarnChild {
   static volatile TaskAttemptID taskid = null;
 
   public static void main(String[] args) throws Throwable {
+	  long time = System.currentTimeMillis();
   	// MPI code is inserted here
 	LOG.info("MPI is initializing...");    
 	String params[] = {};
@@ -87,7 +88,7 @@ public class YarnChild {
     final JobConf defaultConf = new JobConf();
     defaultConf.addResource(MRJobConfig.JOB_CONF_FILE);
     UserGroupInformation.setConfiguration(defaultConf);
-
+    LOG.info("(1)" + " --> " + (System.currentTimeMillis() - time));	
     String host = args[0];
     int port = Integer.parseInt(args[1]);
     final InetSocketAddress address =
@@ -96,7 +97,7 @@ public class YarnChild {
     int jvmIdInt = Integer.parseInt(args[3]);
     JVMId jvmId = new JVMId(firstTaskid.getJobID(),
         firstTaskid.getTaskType() == TaskType.MAP, jvmIdInt);
-
+    LOG.info("(2)" + " --> " + (System.currentTimeMillis() - time));	
     // initialize metrics
     DefaultMetricsSystem.initialize(
         StringUtils.camelize(firstTaskid.getTaskType().name()) +"Task");
@@ -108,7 +109,7 @@ public class YarnChild {
     for (Token<?> token: credentials.getAllTokens()) {
       LOG.info(token);
     }
-
+    LOG.info("(3)" + " --> " + (System.currentTimeMillis() - time));	
     // Create TaskUmbilicalProtocol as actual task owner.
     UserGroupInformation taskOwner =
       UserGroupInformation.createRemoteUser(firstTaskid.getJobID().toString());
@@ -123,7 +124,7 @@ public class YarnChild {
             TaskUmbilicalProtocol.versionID, address, defaultConf);
       }
     });
-
+    LOG.info("(4)" + " --> " + (System.currentTimeMillis() - time));	
     // report non-pid to application master
     JvmContext context = new JvmContext(jvmId, "-1000");
     LOG.debug("PID: " + System.getenv().get("JVM_PID"));
@@ -144,10 +145,10 @@ public class YarnChild {
       if (myTask.shouldDie()) {
         return;
       }
-
+      
       task = myTask.getTask();
       YarnChild.taskid = task.getTaskID();
-
+      LOG.info("(5)" + " --> " + (System.currentTimeMillis() - time));	
       // Create the job-conf and set credentials
       final JobConf job = configureTask(task, credentials, jt);
 
@@ -160,7 +161,7 @@ public class YarnChild {
 
       // set job classloader if configured before invoking the task
       MRApps.setJobClassLoader(job);
-
+      LOG.info("(6)" + " --> " + (System.currentTimeMillis() - time));	
       // Create a final reference to the task for the doAs block
       final Task taskFinal = task;
       childUGI.doAs(new PrivilegedExceptionAction<Object>() {
@@ -172,6 +173,7 @@ public class YarnChild {
           return null;
         }
       });
+      LOG.info("(7)" + " --> " + (System.currentTimeMillis() - time));	
     } catch (FSError e) {
       LOG.fatal("FSError from child", e);
       umbilical.fsError(taskid, e.getMessage());
@@ -219,7 +221,7 @@ public class YarnChild {
       // there is no more logging done.
       LogManager.shutdown();
     }
-    
+    LOG.info("(8)" + " --> " + (System.currentTimeMillis() - time));	
     /* Finalize should be called somewhere else, not here since it might shutdown MPI */
     //LOG.info("Finish MPI with rank " + rank + " at YarnChild");
     //MPI.Finalize();		          

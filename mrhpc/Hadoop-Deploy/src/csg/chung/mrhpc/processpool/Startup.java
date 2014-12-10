@@ -5,7 +5,6 @@ import mpi.MPI;
 import mpi.MPIException;
 
 public class Startup {
-	public final static int NUMBER_PROCESS_EACH_NODE = 5;
 	public final static String HADOOP_FOLDER 			= "/home/mrhpc/hadoop";
 	private int rank, size;
 	
@@ -27,7 +26,7 @@ public class Startup {
 	
 	public void startMPIProcess(){
 		// Start every process
-		if (rank % NUMBER_PROCESS_EACH_NODE == 0){
+		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
 			Pool p = new Pool(rank);
 			if (rank > 0){
 				String prop = "-Dhadoop.log.dir=/home/mrhpc/hadoop/logs -Dyarn.log.dir=/home/mrhpc/hadoop/logs -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.home.dir= -Dyarn.id.str=mrhpc -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA -Dyarn.policy.file=hadoop-policy.xml -server -Dhadoop.log.dir=/home/mrhpc/hadoop/logs -Dyarn.log.dir=/home/mrhpc/hadoop/logs -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.home.dir=/home/mrhpc/hadoop -Dhadoop.home.dir=/home/mrhpc/hadoop -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA";
@@ -41,7 +40,7 @@ public class Startup {
 	}
 	
 	public void startNonMPIProcess(){
-		if (rank % NUMBER_PROCESS_EACH_NODE == 0){
+		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
 			if (rank == 0){
 				startMaster(rank);
 			}else{

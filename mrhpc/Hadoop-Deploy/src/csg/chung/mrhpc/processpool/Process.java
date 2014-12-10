@@ -18,7 +18,7 @@ public class Process {
 	
 	public Process(int rank){
 		this.rank = rank;
-		this.parent = (int)(rank/Startup.NUMBER_PROCESS_EACH_NODE) * Startup.NUMBER_PROCESS_EACH_NODE;
+		this.parent = (int)(rank/Configure.NUMBER_PROCESS_EACH_NODE) * Configure.NUMBER_PROCESS_EACH_NODE;
 		this.numberThread = 0;
 	}
 	

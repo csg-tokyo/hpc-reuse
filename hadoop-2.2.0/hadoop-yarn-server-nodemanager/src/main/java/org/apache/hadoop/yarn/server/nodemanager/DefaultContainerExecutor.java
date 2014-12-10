@@ -222,9 +222,8 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 				}
 				*/
 	  		try {    	  
-    	  		int NUMBER_PROCESS_EACH_NODE = 8;
     	  		int rank = MPI.COMM_WORLD.getRank();
-    	  		int parent = (int)(rank/NUMBER_PROCESS_EACH_NODE) * NUMBER_PROCESS_EACH_NODE;    	  		
+    	  		int parent = (int)(rank/csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE) * csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE;    	  		
     	  		sendSpawnToParent(parent, command[command.length - 1]);
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block

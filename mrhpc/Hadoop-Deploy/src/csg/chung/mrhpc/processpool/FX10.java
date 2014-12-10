@@ -6,7 +6,6 @@ import java.net.InetAddress;
 
 import mpi.MPI;
 import mpi.MPIException;
-import csg.chung.mrhpc.deploy.Configure;
 import csg.chung.mrhpc.utils.Lib;
 
 public class FX10 {
@@ -16,7 +15,6 @@ public class FX10 {
 	public final static String HADOOP_FOLDER 			= Configure.DEPLOY_FOLDER + "/hadoop/code/";
 	public final static String OPENMPI_JAVA_LIB 		= Configure.DEPLOY_FOLDER + "/openmpi/lib/";	
 	
-	public final static int NUMBER_PROCESS_EACH_NODE = 8;
 	private int rank, size;
 	
 	public FX10(){
@@ -37,7 +35,7 @@ public class FX10 {
 	
 	public void startMPIProcess(){
 		// Start every process
-		if (rank % NUMBER_PROCESS_EACH_NODE == 0){
+		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
 			Pool p = new Pool(rank);
 			if (rank > 0){
 				String hadoopFolder = HADOOP_FOLDER + rank; 
@@ -55,7 +53,7 @@ public class FX10 {
 	}
 	
 	public void startNonMPIProcess(){		
-		if (rank % NUMBER_PROCESS_EACH_NODE == 0){
+		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
 			if (rank == 0){
 				initialize();
 				startNameNode(rank);
@@ -99,7 +97,7 @@ public class FX10 {
 			
 			// Send master address to DataNode
 			 char[] message = ip.getHostAddress().toCharArray();
-			 for (int i=NUMBER_PROCESS_EACH_NODE; i < size; i = i + NUMBER_PROCESS_EACH_NODE){
+			 for (int i= Configure.NUMBER_PROCESS_EACH_NODE; i < size; i = i + Configure.NUMBER_PROCESS_EACH_NODE){
 				 MPI.COMM_WORLD.send(message, message.length, MPI.CHAR, i, 99);	
 			 }	 
 			 System.out.println("NameNode sending its IP address --> OK");

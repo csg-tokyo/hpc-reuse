@@ -57,7 +57,7 @@ public class Pool {
 	}
 	
 	public int getFreeSLot(){
-		for (int i=rank + 1 + busyCount; i < rank + Startup.NUMBER_PROCESS_EACH_NODE; i++){
+		for (int i=rank + 1 + busyCount; i < rank + Configure.NUMBER_PROCESS_EACH_NODE; i++){
 			request(CMD_CHECK_FREE + "", i);
 			int ack = waitAck(i);
 			System.out.println("Ack from " + i + ": " + (ack == Process.ACK_FREE ? "Free":"Busy"));

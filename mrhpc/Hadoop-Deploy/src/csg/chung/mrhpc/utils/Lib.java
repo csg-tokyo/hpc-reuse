@@ -17,7 +17,8 @@ public class Lib {
 	public static void printNodeInfo(int rank, int size){
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
-			System.out.println("P" + rank + "/" + size + ": " + ip.getHostName() + " - " + ip.getHostAddress());						
+			long memory = Runtime.getRuntime().maxMemory();
+			System.out.println("P" + rank + "/" + size + ": " + ip.getHostName() + " - " + ip.getHostAddress() + " --> memory: " + memory);						
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

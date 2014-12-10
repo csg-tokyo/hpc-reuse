@@ -16,7 +16,7 @@ public class FX10 {
 	public final static String HADOOP_FOLDER 			= Configure.DEPLOY_FOLDER + "/hadoop/code/";
 	public final static String OPENMPI_JAVA_LIB 		= Configure.DEPLOY_FOLDER + "/openmpi/lib/";	
 	
-	public final static int NUMBER_PROCESS_EACH_NODE = 5;
+	public final static int NUMBER_PROCESS_EACH_NODE = 8;
 	private int rank, size;
 	
 	public FX10(){

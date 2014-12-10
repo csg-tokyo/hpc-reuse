@@ -222,7 +222,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 				}
 				*/
 	  		try {    	  
-    	  		int NUMBER_PROCESS_EACH_NODE = 5;
+    	  		int NUMBER_PROCESS_EACH_NODE = 8;
     	  		int rank = MPI.COMM_WORLD.getRank();
     	  		int parent = (int)(rank/NUMBER_PROCESS_EACH_NODE) * NUMBER_PROCESS_EACH_NODE;    	  		
     	  		sendSpawnToParent(parent, command[command.length - 1]);

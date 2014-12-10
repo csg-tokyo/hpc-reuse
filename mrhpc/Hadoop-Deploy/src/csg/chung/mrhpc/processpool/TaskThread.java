@@ -136,13 +136,17 @@ public class TaskThread extends Thread {
 			//System.out.println(properties + " " + className);
 			//System.out.println("Classpath: " + setClasspath(hadoopFolder));
 			//System.out.println("Classpath: " + classpathExt.toString());			
+			System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());  			
 			Class<?> hello = Class.forName(className);
 			System.out.println(MPI.COMM_WORLD.getRank() + " (1)" + " --> " + (System.currentTimeMillis() - time));
+			System.out.println("Free memory 1: " + Runtime.getRuntime().freeMemory());  			
 			Method mainMethod = hello.getMethod("main", String[].class);
 			System.out.println(MPI.COMM_WORLD.getRank() + " (2)" + " --> " + (System.currentTimeMillis() - time));			
+			System.out.println("Free memory 2: " + Runtime.getRuntime().freeMemory());  						
 			Object[] arguments = new Object[] {args};
 			mainMethod.invoke(null, arguments);
-			System.out.println(MPI.COMM_WORLD.getRank() + " (3)" + " --> " + (System.currentTimeMillis() - time));						
+			System.out.println(MPI.COMM_WORLD.getRank() + " (3)" + " --> " + (System.currentTimeMillis() - time));		
+			System.out.println("Free memory 3: " + Runtime.getRuntime().freeMemory());  						
 			Thread.currentThread().setName("NodeManager");
 			System.out.println(MPI.COMM_WORLD.getRank() + " thread ID: " + Thread.currentThread().getId() + " --> " + (System.currentTimeMillis() - time));
 		} catch (Exception e) {

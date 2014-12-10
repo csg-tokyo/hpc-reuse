@@ -126,10 +126,10 @@ public class TaskThread extends Thread {
 		try {
 			long time = System.currentTimeMillis();
 			//String path = "/home/mrhpc/hadoop/etc/hadoop:/home/mrhpc/hadoop/etc/hadoop:.:/home/mrhpc/hadoop/etc/hadoop:/home/mrhpc/hadoop/share/hadoop/common/lib/*:/home/mrhpc/hadoop/share/hadoop/common/*:/home/mrhpc/hadoop/share/hadoop/hdfs:/home/mrhpc/hadoop/share/hadoop/hdfs/lib/*:/home/mrhpc/hadoop/share/hadoop/hdfs/*:/home/mrhpc/hadoop/share/hadoop/yarn/lib/*:/home/mrhpc/hadoop/share/hadoop/yarn/*:/home/mrhpc/hadoop/share/hadoop/mapreduce/lib/*:/home/mrhpc/hadoop/share/hadoop/mapreduce/*:/contrib/capacity-scheduler/*.jar:/contrib/capacity-scheduler/*.jar:/home/mrhpc/usr/lib/mpi.jar:/home/mrhpc/test:/home/mrhpc/test/guava-17.0.jar:/home/mrhpc/test/commons-codec-1.9.jar:/home/mrhpc/hadoop/share/hadoop/yarn/*:/home/mrhpc/hadoop/share/hadoop/yarn/lib/*:/home/mrhpc/hadoop/etc/hadoop/nm-config/log4j.properties";
-			//int parent = (int)(MPI.COMM_WORLD.getRank()/Startup.NUMBER_PROCESS_EACH_NODE) * Startup.NUMBER_PROCESS_EACH_NODE;
-			//String hadoopFolder = FX10.HADOOP_FOLDER + parent; 
-			//URL[] classpathExt = buildClasspath(setClasspath(hadoopFolder));
-			//URLClassLoader loader = new URLClassLoader(classpathExt, null);
+			int parent = (int)(MPI.COMM_WORLD.getRank()/Configure.NUMBER_PROCESS_EACH_NODE) * Configure.NUMBER_PROCESS_EACH_NODE;
+			String hadoopFolder = FX10.HADOOP_FOLDER + parent; 
+			URL[] classpathExt = buildClasspath(setClasspath(hadoopFolder));
+			URLClassLoader loader = new URLClassLoader(classpathExt);
 			//String prop = "-Dhadoop.log.dir=/home/mrhpc/hadoop/logs -Dyarn.log.dir=/home/mrhpc/hadoop/logs -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.home.dir= -Dyarn.id.str=mrhpc -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA -Dyarn.policy.file=hadoop-policy.xml -server -Dhadoop.log.dir=/home/mrhpc/hadoop/logs -Dyarn.log.dir=/home/mrhpc/hadoop/logs -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave1.log -Dyarn.home.dir=/home/mrhpc/hadoop -Dhadoop.home.dir=/home/mrhpc/hadoop -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA";
 			//"org.apache.hadoop.yarn.server.nodemanager.NodeManager"
 			
@@ -137,7 +137,8 @@ public class TaskThread extends Thread {
 			//System.out.println("Classpath: " + setClasspath(hadoopFolder));
 			//System.out.println("Classpath: " + classpathExt.toString());			
 			System.out.println("Free memory: " + Runtime.getRuntime().freeMemory());  			
-			Class<?> hello = Class.forName(className);
+			//Class<?> hello = Class.forName(className);
+			Class<?> hello = loader.loadClass(className);
 			System.out.println(MPI.COMM_WORLD.getRank() + " (1)" + " --> " + (System.currentTimeMillis() - time));
 			System.out.println("Free memory 1: " + Runtime.getRuntime().freeMemory());  			
 			Method mainMethod = hello.getMethod("main", String[].class);

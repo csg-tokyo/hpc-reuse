@@ -185,7 +185,7 @@ public static final int ERR_SYSRESOURCE;
 
 static
 {
-    System.loadLibrary("mpi_java");
+    //System.loadLibrary("mpi_java");
 
     if(!loadGlobalLibraries())
     {

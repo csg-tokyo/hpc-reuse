@@ -184,7 +184,6 @@ public class FX10 {
 	}		
 	
 	public static void main(String[] args) throws MPIException {
-		System.loadLibrary("mpi_java");		
 		MPI.Init(args);
 		new FX10();
 		if (MPI.COMM_WORLD.getRank() == 0) {

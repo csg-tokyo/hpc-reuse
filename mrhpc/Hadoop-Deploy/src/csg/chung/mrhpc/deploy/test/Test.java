@@ -33,9 +33,9 @@ public class Test {
 			}
 	}
 	
-	public static void main(String args[]) throws MPIException, UnknownHostException{
-		MPI.Init(args);
-		new Test();
-		MPI.Finalize();
+	public static void main(String args[]){
+		//MPI.Init(args);
+		System.out.println(System.getProperty("java.class.path"));
+		//MPI.Finalize();
 	}
 }

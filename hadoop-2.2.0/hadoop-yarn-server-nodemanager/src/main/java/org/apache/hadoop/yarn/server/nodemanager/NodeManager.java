@@ -387,7 +387,8 @@ public class NodeManager extends CompositeService
   public static void main(String[] args) {
 	  // MPI code is inserted here
 	  long time = System.currentTimeMillis();
-		int rank;
+		/*
+	  int rank;
 		try {
 			rank = MPI.COMM_WORLD.getRank();
 			System.out.println("Start MPI with rank " + rank + " at Nodemanager");
@@ -396,6 +397,7 @@ public class NodeManager extends CompositeService
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		LOG.info("(1)" + " --> " + (System.currentTimeMillis() - time));					
 	    Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
 	    StringUtils.startupShutdownMessage(NodeManager.class, args, LOG);

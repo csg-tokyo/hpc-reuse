@@ -59,6 +59,7 @@ public class Process {
 							t.start();
 						}
 						sendAck(parent, ACK_OK);
+						break;
 					}
 					System.out.println(MPI.COMM_WORLD.getRank() + " new TaskThread" + " --> " + (System.currentTimeMillis() - time));
 					message = ByteBuffer.allocateDirect(Constants.BYTE_BUFFER_LENGTH).asCharBuffer();

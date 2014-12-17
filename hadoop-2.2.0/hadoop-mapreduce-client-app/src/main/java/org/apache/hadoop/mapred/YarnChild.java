@@ -79,8 +79,8 @@ public class YarnChild {
 	LOG.info("MPI is initializing...");    
 	String params[] = {};
   	//MPI.Init(params);
-  	int rank = MPI.COMM_WORLD.getRank();
-	LOG.info("Start MPI with rank " + rank + " at YarnChild");    	 
+  	//int rank = MPI.COMM_WORLD.getRank();
+	//LOG.info("Start MPI with rank " + rank + " at YarnChild");    	 
 	
     Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
     LOG.debug("Child starting");

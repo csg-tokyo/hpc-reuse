@@ -6,7 +6,10 @@ import java.net.InetAddress;
 
 import mpi.MPI;
 import mpi.MPIException;
+import csg.chung.mrhpc.deploy.fx10.Deploy;
+import csg.chung.mrhpc.deploy.test.SortClient;
 import csg.chung.mrhpc.utils.Lib;
+import csg.chung.mrhpc.utils.SortThread;
 
 public class FX10 {
 	/* Don't change the below constants */
@@ -35,9 +38,9 @@ public class FX10 {
 	
 	public void startMPIProcess(){
 		// Start every process
-		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
-			Pool p = new Pool(rank);
-			if (rank > 0){
+		if (rank / Configure.NUMBER_PROCESS_EACH_NODE > 0){
+			if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
+				Pool p = new Pool(rank);
 				String hadoopFolder = HADOOP_FOLDER + rank; 
 				String logFolder = hadoopFolder + "/logs"; 				
 				String prop = 	"-Dhostname=" + Lib.getHostname() + " -Dhadoop.log.dir=" + logFolder + " -Dyarn.log.dir=" + logFolder + 
@@ -46,9 +49,12 @@ public class FX10 {
 				String className = "org.apache.hadoop.yarn.server.nodemanager.NodeManager";	
 				p.startNewProcess(prop, className);
 				p.waiting();
-			}			
-		}else{
-			new Process(rank).waiting();
+				
+			}else{
+				
+				new Process(rank).waiting();		
+						
+			}
 		}					
 	}
 	
@@ -126,8 +132,12 @@ public class FX10 {
 			
 			// Start DataNode
 			Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/hadoop-daemon.sh start datanode");
-
+			//Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/yarn-daemon.sh start nodemanager");
+			
 			System.out.println("Start DataNode " + rank + " --> OK");
+			//Lib.runCommand("java csg.chung.mrhpc.deploy.test.SortClient >> /mppxb/c83014/tuning/rank/" + rank + ".txt 2>&1");
+			//new SortThread(rank).start();
+			//new SortClient(rank);
 		} catch (MPIException e) {
 			e.printStackTrace();
 		}	
@@ -186,6 +196,7 @@ public class FX10 {
 	public static void main(String[] args) throws MPIException {
 		MPI.Init(args);
 		new FX10();
+		
 		if (MPI.COMM_WORLD.getRank() == 0) {
 			System.out.println("Hadoop is READY!!!");
 			try {
@@ -196,6 +207,7 @@ public class FX10 {
 				e.printStackTrace();
 			}
 		}
+		
 		MPI.Finalize();
 	}	
 }

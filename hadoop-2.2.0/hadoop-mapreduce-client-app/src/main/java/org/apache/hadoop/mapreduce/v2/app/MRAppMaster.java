@@ -1323,8 +1323,8 @@ public class MRAppMaster extends CompositeService {
     	// MPI code is inserted here
     	String params[] = {};
     	//MPI.Init(params);
-		int rank = MPI.COMM_WORLD.getRank();
-		LOG.info("Start MPI with rank " + rank + " at MRAppMaster");    
+		//int rank = MPI.COMM_WORLD.getRank();
+		//LOG.info("Start MPI with rank " + rank + " at MRAppMaster");    
 		
       Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
       String containerIdStr =

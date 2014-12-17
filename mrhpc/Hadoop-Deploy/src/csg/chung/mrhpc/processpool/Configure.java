@@ -27,5 +27,5 @@ public class Configure {
 	 */
 	public final static String ELAPSED_TIME				= "00:30:00";	
 	
-	public final static int NUMBER_PROCESS_EACH_NODE = 8;
+	public final static int NUMBER_PROCESS_EACH_NODE 	= 8;
 }

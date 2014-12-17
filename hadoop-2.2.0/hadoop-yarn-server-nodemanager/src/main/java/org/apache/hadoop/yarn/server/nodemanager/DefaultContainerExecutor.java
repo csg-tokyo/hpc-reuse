@@ -205,34 +205,18 @@ public class DefaultContainerExecutor extends ContainerExecutor {
           new File(containerWorkDir.toUri().getPath()),
           container.getLaunchContext().getEnvironment());      // sanitized env
       if (isContainerActive(containerId)) {
-    	  		// MPI code is inserted here
-    	  		/*
-    	  		try {
-					Intercomm parent = Intercomm.getParent();
-					InetAddress ip = InetAddress.getLocalHost();
-					System.out.println("Parent size 123: " + parent.getRemoteSize() + " - " + ip.getHostName());
-					for (int i=0; i < parent.getRemoteSize(); i++){
-						sendSpawnToParent(parent, i, command[command.length - 1]);
-					}
-					
 
-				} catch (MPIException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				*/
-	  		try {    	  
+    	  try {    	  
     	  		int rank = MPI.COMM_WORLD.getRank();
     	  		int parent = (int)(rank/csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE) * csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE;    	  		
     	  		sendSpawnToParent(parent, command[command.length - 1]);
-		} catch (MPIException e) {
+    	  } catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}    	  		
-				System.out.println("start start waiting for completion" + Arrays.toString(command));
-				for (;;){
-					
-				}
+    	  }    	  		
+    	  System.out.println("start start waiting for completion 123" + Arrays.toString(command));
+    	  for (;;){		
+    	  }
 				//shExec.execute();
 				//System.out.println("end end waiting for completion" + Arrays.toString(command));
       }

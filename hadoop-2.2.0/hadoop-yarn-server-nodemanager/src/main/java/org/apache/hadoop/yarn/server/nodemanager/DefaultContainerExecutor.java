@@ -66,6 +66,8 @@ import org.apache.hadoop.yarn.util.ConverterUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import csg.chung.mrhpc.utils.SendRecv;
+
 public class DefaultContainerExecutor extends ContainerExecutor {
 
   private static final Log LOG = LogFactory
@@ -209,7 +211,8 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     	  try {    	  
     	  		int rank = MPI.COMM_WORLD.getRank();
     	  		int parent = (int)(rank/csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE) * csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE;    	  		
-    	  		sendSpawnToParent(parent, command[command.length - 1]);
+    	  		SendRecv sr = new SendRecv();
+    	  		sr.exchangeMsgSrc(rank, parent, command[command.length - 1]);
     	  } catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

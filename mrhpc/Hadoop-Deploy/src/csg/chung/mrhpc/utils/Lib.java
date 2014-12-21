@@ -101,10 +101,14 @@ public class Lib {
 		}
 	}			
 	
-	public static String buildCommand(int cmd, String... args){
-		String result = Integer.toString(cmd);
+	public static String buildCommand(String... args){
+		String result = "";
 		for (int i=0; i < args.length; i++){
-			result = result + Constants.SPLIT_REGEX + args[i];
+			if (i == args.length - 1){
+				result = result + args[i];
+			}else{
+				result = result + args[i] + Constants.SPLIT_REGEX;
+			}
 		}
 		return result;
 	}	

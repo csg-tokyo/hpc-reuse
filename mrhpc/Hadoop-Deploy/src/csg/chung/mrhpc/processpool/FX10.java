@@ -6,10 +6,7 @@ import java.net.InetAddress;
 
 import mpi.MPI;
 import mpi.MPIException;
-import csg.chung.mrhpc.deploy.fx10.Deploy;
-import csg.chung.mrhpc.deploy.test.SortClient;
 import csg.chung.mrhpc.utils.Lib;
-import csg.chung.mrhpc.utils.SortThread;
 
 public class FX10 {
 	/* Don't change the below constants */
@@ -51,9 +48,7 @@ public class FX10 {
 				p.waiting();
 				
 			}else{
-				
-				new Process(rank).waiting();		
-						
+				new Process(rank).waiting();			
 			}
 		}					
 	}

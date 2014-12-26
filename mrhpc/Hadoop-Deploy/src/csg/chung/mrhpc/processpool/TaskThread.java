@@ -146,7 +146,7 @@ public class TaskThread extends Thread {
 			mainMethod.invoke(null, arguments);
 			System.out.println(MPI.COMM_WORLD.getRank() + " (3)" + " --> " + (System.currentTimeMillis() - time));		
 			//System.out.println("Free memory 3: " + Runtime.getRuntime().freeMemory());  						
-			Thread.currentThread().setName("NodeManager");
+			//Thread.currentThread().setName("NodeManager");
 			//System.out.println(MPI.COMM_WORLD.getRank() + " thread ID: " + Thread.currentThread().getId() + " --> " + (System.currentTimeMillis() - time));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

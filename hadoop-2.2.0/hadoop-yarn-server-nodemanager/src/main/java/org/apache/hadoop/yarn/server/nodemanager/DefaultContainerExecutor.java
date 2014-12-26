@@ -213,13 +213,13 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     	  		int parent = (int)(rank/csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE) * csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE;    	  		
     	  		SendRecv sr = new SendRecv();
     	  		sr.exchangeMsgSrc(rank, parent, command[command.length - 1]);
+    	  		sr.exchangeMsgDes(rank);
     	  } catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
     	  }    	  		
-    	  System.out.println("start start waiting for completion 123" + Arrays.toString(command));
-    	  for (;;){		
-    	  }
+    	  //for (;;){		
+    	  //}
 				//shExec.execute();
 				//System.out.println("end end waiting for completion" + Arrays.toString(command));
       }
@@ -257,7 +257,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       ; //
     }
     
-    //return 0;
+    return 0;
   }
 
   	public void waitForSpawn(Intercomm group, int parent){

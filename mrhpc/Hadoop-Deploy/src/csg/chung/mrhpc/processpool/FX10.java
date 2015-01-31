@@ -189,7 +189,7 @@ public class FX10 {
 	}		
 	
 	public static void main(String[] args) throws MPIException {
-		MPI.Init(args);
+		MPI.InitThread(args, MPI.THREAD_SERIALIZED);
 		new FX10();
 		
 		if (MPI.COMM_WORLD.getRank() == 0) {

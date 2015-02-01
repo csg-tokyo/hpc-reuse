@@ -72,6 +72,7 @@ public class FX10 {
 		Lib.runCommand("mkdir " + DATA_FOLDER);
 		Lib.runCommand("mkdir " + TMP_FOLDER);
 		Lib.runCommand("mkdir " + HADOOP_FOLDER);
+		Lib.runCommand("mkdir " + Configure.LOCK_FILE_PATH);
 	}
 	
 	/**

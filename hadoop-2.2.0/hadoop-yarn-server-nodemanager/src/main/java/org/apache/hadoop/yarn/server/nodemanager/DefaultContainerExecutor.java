@@ -29,10 +29,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.RandomAccessFile;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -209,10 +213,37 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       if (isContainerActive(containerId)) {
 
     	  try {    	  
-    	  		int rank = MPI.COMM_WORLD.getRank();
-    	  		int parent = (int)(rank/csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE) * csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE;    	  		
-    	  		SendRecv sr = new SendRecv();
-    	  		sr.exchangeMsgSrc(rank, parent, command[command.length - 1]);
+  	  			int rank = MPI.COMM_WORLD.getRank();
+  	  			int parent = (int)(rank/csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE) * csg.chung.mrhpc.processpool.Configure.NUMBER_PROCESS_EACH_NODE;    	  		    		  
+    		  
+    		  File file = new File(csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH + rank);
+    		  if (!file.exists()){
+    			  file.createNewFile();
+    		  }
+    		  FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
+
+    		  FileLock lock;
+    		  while(true){
+    		  try {
+    		      lock = channel.tryLock();
+    		      LOG.info("Holding lock: " + Arrays.toString(command));    		      
+    		      SendRecv sr = new SendRecv();
+    		      sr.exchangeMsgSrc(rank, parent, command[command.length - 1]);   
+    		      // Ok. You get the lock
+    		      lock.release();
+    		      channel.close();
+    		      break;
+    		  } catch (OverlappingFileLockException e) {
+    		      // File is open by someone else
+    			  LOG.info("Locked: " + Arrays.toString(command));   
+    			  try {
+					Thread.sleep(100);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+    		  }  		  
+    		  }
     	  } catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

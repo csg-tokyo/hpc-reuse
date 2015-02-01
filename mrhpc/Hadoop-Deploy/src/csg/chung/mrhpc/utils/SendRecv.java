@@ -16,10 +16,10 @@ public class SendRecv {
 		if (rank == src){
 			bSendCmd(Constants.EXCHANGE_MSG_CMD, msg.length(), des, Constants.EXCHANGE_MSG_TAG);
 			bSendString(msg, des, Constants.DATA_TAG);
-			int cmd[] = bRecvCmd(des, Constants.ACK_TAG);
-			if (cmd[0] == Constants.ACK_CMD){
-				System.out.println(src + " received ack: " + Constants.MEANING[cmd[0]]);
-			}
+			//int cmd[] = bRecvCmd(des, Constants.ACK_TAG);
+			//if (cmd[0] == Constants.ACK_CMD){
+			//	System.out.println(src + " received ack: " + Constants.MEANING[cmd[0]]);
+			//}
 		}		
 	}
 	
@@ -30,7 +30,8 @@ public class SendRecv {
 			if (cmd[0] == Constants.EXCHANGE_MSG_CMD){
 				String data = bRecvString(cmd[1], cmd[2], Constants.DATA_TAG);
 				System.out.println(des + " received data from " + cmd[2] + ": " + data);
-				bSendCmd(Constants.ACK_CMD, 0, cmd[2], Constants.ACK_TAG);
+				//bSendCmd(Constants.ACK_CMD, 0, cmd[2], Constants.ACK_TAG);
+				//System.out.println(rank + " sending ack OK");
 				return data;
 			}
 		}		

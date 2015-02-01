@@ -31,4 +31,9 @@ public class Configure {
 	public final static String ELAPSED_TIME				= "00:30:00";	
 	
 	public final static int NUMBER_PROCESS_EACH_NODE 	= 8;
+	
+	/**
+	 * Lock file
+	 */
+	public final static String LOCK_FILE_PATH = DEPLOY_FOLDER + "/hadoop/lock/";
 }

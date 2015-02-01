@@ -249,8 +249,14 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 			e.printStackTrace();
     	  }    	  		
 
-    	  for (;;){		
-    	  }
+    	  //for (;;){		
+    	  //}
+    	  try {
+			Thread.sleep(100*1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 				//shExec.execute();
 				//System.out.println("end end waiting for completion" + Arrays.toString(command));
       }
@@ -288,7 +294,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       ; //
     }
     
-    //return 0;
+    return 0;
   }
 
   	public void waitForSpawn(Intercomm group, int parent){

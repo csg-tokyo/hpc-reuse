@@ -69,11 +69,13 @@ import org.apache.log4j.LogManager;
  */
 public class YarnChild {
 
-  private static final Log LOG = LogFactory.getLog(YarnChild.class);
+  private static Log LOG;
 
   static volatile TaskAttemptID taskid = null;
 
   public static void main(String[] args) throws Throwable {
+	  LOG = LogFactory.getLog(YarnChild.class);
+	  System.out.println("Start logging here");
 	  long time = System.currentTimeMillis();
   	// MPI code is inserted here
 	LOG.info("MPI is initializing...");    
@@ -219,7 +221,7 @@ public class YarnChild {
       // Shutting down log4j of the child-vm...
       // This assumes that on return from Task.run()
       // there is no more logging done.
-      LogManager.shutdown();
+      //LogManager.shutdown();
     }
     LOG.info("(8)" + " --> " + (System.currentTimeMillis() - time));	
     /* Finalize should be called somewhere else, not here since it might shutdown MPI */

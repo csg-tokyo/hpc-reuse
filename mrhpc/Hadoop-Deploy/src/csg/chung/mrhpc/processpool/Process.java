@@ -1,7 +1,17 @@
 package csg.chung.mrhpc.processpool;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.OverlappingFileLockException;
+import java.util.Arrays;
+
 import mpi.MPIException;
 import csg.chung.mrhpc.deploy.Constants;
+import csg.chung.mrhpc.utils.Lib;
 import csg.chung.mrhpc.utils.SendRecv;
 
 public class Process {
@@ -13,21 +23,75 @@ public class Process {
 
 	public void waiting() {
 		TaskThread t = null;
-
 		try {
-			SendRecv sr = new SendRecv();
-			String msg = sr.exchangeMsgDes(rank);
-			String split[] = msg.split(Constants.SPLIT_REGEX);
-			if (split.length >= 2) {
-				t = new TaskThread(split[0], split[1]);
-				t.start();
-			} else {
-				t = new TaskThread(split[0]);
-				t.start();
+			for (;;) {
+				SendRecv sr = new SendRecv();
+				String msg = sr.exchangeMsgDes(rank);
+				String split[] = msg.split(Constants.SPLIT_REGEX);
+				if (split.length >= 2) {
+					// For nodemanager
+					t = new TaskThread(split[0], split[1]);
+					t.start();
+					break;
+				} else {
+					t = new TaskThread(split[0]);
+					t.start();
+					t.join();
+					File file = new File(
+							csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH
+									+ rank);
+					if (!file.exists()) {
+						try {
+							file.createNewFile();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					FileChannel channel = new RandomAccessFile(file, "rw")
+							.getChannel();
+					FileLock lock;
+					while (true) {
+						try {
+							lock = channel.tryLock();
+
+							// Ok. You get the lock
+							lock.release();
+							channel.close();
+							break;
+						} catch (OverlappingFileLockException e) {
+							// File is open by someone else
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+
+					String free = Lib.buildCommand(Integer.toString(rank),
+							Integer.toString(rank));
+					int parent = (int) (rank / Configure.NUMBER_PROCESS_EACH_NODE)
+							* Configure.NUMBER_PROCESS_EACH_NODE;
+					SendRecv srFree = new SendRecv();
+					srFree.exchangeMsgSrc(rank, parent, free);
+					
+					t.resetSystemOutErr();
+				}
 			}
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (FileNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 	}
 }

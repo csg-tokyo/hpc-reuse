@@ -2,6 +2,7 @@ package csg.chung.mrhpc.processpool;
 
 
 import mpi.MPIException;
+import csg.chung.mrhpc.deploy.Constants;
 import csg.chung.mrhpc.utils.Lib;
 import csg.chung.mrhpc.utils.SendRecv;
 
@@ -23,16 +24,26 @@ public class Pool {
 		try {
 			SendRecv sr = new SendRecv();						
 			while (true) {
-					String cmd = sr.exchangeMsgDes(rank);				
-					cmd = cmd.replace("default_container_executor.sh", "launch_container.sh");
-					System.out.println(rank + " recv: " + cmd);
-					startNewProcess(cmd, "");
+					String cmd = sr.exchangeMsgDes(rank);	
+					String split[] = cmd.split(Constants.SPLIT_REGEX);
+					if (split.length >= 2){
+						System.out.println(rank + " Set free slot");
+						setFreeSlot(Integer.parseInt(split[0]) % Configure.NUMBER_PROCESS_EACH_NODE);
+					}else{
+						cmd = cmd.replace("default_container_executor.sh", "launch_container.sh");
+						System.out.println(rank + " recv: " + cmd);
+						startNewProcess(cmd, "");
+					}					
 			}
 		} catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	public void setFreeSlot(int s){
+		busyFlag[s] = 0;
+	}	
 	
 	public void startNewProcess(String prop, String className){
 		int des = getFreeSLot();

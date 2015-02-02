@@ -68,6 +68,7 @@ public class TaskThread extends Thread {
 	public void makeJobDir(){
 		home = FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank();
 		//System.out.println("Make dir: " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
+		Lib.runCommand("rm -rf " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
 		Lib.runCommand("mkdir " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());		
 		//System.out.println("User dir:" + System.getProperty("user.dir"));
 		System.setProperty("user.dir", FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());

@@ -25,6 +25,8 @@ public class TaskThread extends Thread {
 	String args[];
 	int count;
 	String exe;
+	PrintStream stdout;
+	PrintStream stderr;
 	
 	public TaskThread(String prop, String name) {
 		this.properties = prop;
@@ -34,6 +36,10 @@ public class TaskThread extends Thread {
 	}
 	
 	public TaskThread(String input){
+		// System output
+		stdout = System.out;
+		stderr = System.err;
+
 		args = new String[10];
 		count = 0;
 		startArg = false;
@@ -71,7 +77,7 @@ public class TaskThread extends Thread {
 	public void lineAnalyze(String line){
 		String split[] = line.split(" ");
 		if (line.startsWith("export")){
-			Environment.setenv(split[1].split("=")[0], split[1].split("=")[1].replaceAll("\"", ""), false);
+			Environment.setenv(split[1].split("=")[0], split[1].split("=")[1].replaceAll("\"", ""), true);
 		}else
 		if (line.startsWith("exec")){
 			for (int i=0; i < split.length; i++){
@@ -119,6 +125,11 @@ public class TaskThread extends Thread {
 				e.printStackTrace();
 			}
 		}		
+	}
+	
+	public void resetSystemOutErr(){
+		System.setOut(stdout);
+		System.setErr(stderr);
 	}
 
 	public void run() {

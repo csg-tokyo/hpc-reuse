@@ -252,6 +252,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     	  //for (;;){		
     	  //}
     	  try {
+    		  LOG.info("Locked: Thread sleep 100 seconds");
 			Thread.sleep(100*1000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

@@ -2,6 +2,7 @@ package csg.chung.mrhpc.processpool;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -28,12 +29,19 @@ public class Process {
 				SendRecv sr = new SendRecv();
 				String msg = sr.exchangeMsgDes(rank);
 				String split[] = msg.split(Constants.SPLIT_REGEX);
-				if (split.length >= 2) {
+				if (split.length == 2) {
 					// For nodemanager
 					t = new TaskThread(split[0], split[1]);
 					t.start();
 					break;
 				} else {
+		    		  File file1 = new File(csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH + split[1]);
+		    		  if (!file1.exists()){
+		    			  file1.createNewFile();
+		    		  }
+		    		  FileOutputStream fos= new FileOutputStream(file1);
+
+		    		  FileLock lock1 = fos.getChannel().tryLock();					
 					t = new TaskThread(split[0]);
 					t.start();
 					t.join();
@@ -81,6 +89,9 @@ public class Process {
 					srFree.exchangeMsgSrc(rank, parent, free);
 					
 					t.resetSystemOutErr();
+					
+  			      lock1.release();
+  			      fos.close();					
 				}
 			}
 		} catch (MPIException e) {
@@ -92,6 +103,9 @@ public class Process {
 		} catch (FileNotFoundException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
-		}
+		}catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}	
 	}
 }

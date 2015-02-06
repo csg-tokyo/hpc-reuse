@@ -25,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -70,6 +71,7 @@ import org.apache.hadoop.yarn.util.ConverterUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import csg.chung.mrhpc.utils.Lib;
 import csg.chung.mrhpc.utils.SendRecv;
 
 public class DefaultContainerExecutor extends ContainerExecutor {
@@ -223,15 +225,28 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     		  FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
 
     		  FileLock lock;
+    		  
+    		  File file1 = new File(csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH + containerIdStr);
+    		  if (!file1.exists()){
+    			  file1.createNewFile();
+    		  }
+    		  FileOutputStream fos= new FileOutputStream(file1);
+    		  
     		  while(true){
     		  try {
     		      lock = channel.tryLock();
     		      LOG.info("Holding lock: " + Arrays.toString(command));    		      
     		      SendRecv sr = new SendRecv();
-    		      sr.exchangeMsgSrc(rank, parent, command[command.length - 1]);   
+    		      sr.exchangeMsgSrc(rank, parent, Lib.buildCommand(command[command.length - 1], containerIdStr, containerIdStr));   
     		      // Ok. You get the lock
     		      lock.release();
     		      channel.close();
+    		      try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     		      break;
     		  } catch (OverlappingFileLockException e) {
     		      // File is open by someone else
@@ -244,21 +259,32 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 				}
     		  }  		  
     		  }
+    		  
+    		  while(true){
+    			  FileLock lock1 = fos.getChannel().tryLock();
+					if (lock1 != null){
+						LOG.info("Get locked");
+						lock1.release();
+						fos.close();
+						break;
+					}else{
+						LOG.info("Being locking");
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}    			  
+    		  }
+    		  
     	  } catch (MPIException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
     	  }    	  		
 
     	  //for (;;){		
-    	  //}
-    	  try {
-    		  LOG.info("Locked: Thread sleep 100 seconds");
-			Thread.sleep(100*1000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-				//shExec.execute();
+    	  //}				//shExec.execute();
 				//System.out.println("end end waiting for completion" + Arrays.toString(command));
       }
       else {

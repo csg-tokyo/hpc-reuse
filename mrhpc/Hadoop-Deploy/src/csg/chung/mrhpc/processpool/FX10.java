@@ -44,7 +44,7 @@ public class FX10 {
 								" -Dhadoop.log.file=yarn-mrhpc-nodemanager-slave" + rank + ".log -Dyarn.log.file=yarn-mrhpc-nodemanager-slave" + rank + ".log -Dyarn.home.dir= -Dyarn.id.str=mrhpc -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA -Dyarn.policy.file=hadoop-policy.xml -server -Dyarn.home.dir=" + hadoopFolder + 
 								" -Dhadoop.home.dir=" + hadoopFolder + " -Dhadoop.root.logger=INFO,RFA -Dyarn.root.logger=INFO,RFA";
 				String className = "org.apache.hadoop.yarn.server.nodemanager.NodeManager";	
-				p.startNewProcess(prop, className);
+				p.startNewProcess(prop, className, "");
 				p.waiting();
 				
 			}else{

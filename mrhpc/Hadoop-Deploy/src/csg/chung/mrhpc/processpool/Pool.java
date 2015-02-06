@@ -26,13 +26,13 @@ public class Pool {
 			while (true) {
 					String cmd = sr.exchangeMsgDes(rank);	
 					String split[] = cmd.split(Constants.SPLIT_REGEX);
-					if (split.length >= 2){
+					if (split.length == 2){
 						System.out.println(rank + " Set free slot");
 						setFreeSlot(Integer.parseInt(split[0]) % Configure.NUMBER_PROCESS_EACH_NODE);
 					}else{
-						cmd = cmd.replace("default_container_executor.sh", "launch_container.sh");
-						System.out.println(rank + " recv: " + cmd);
-						startNewProcess(cmd, "");
+						split[0] = split[0].replace("default_container_executor.sh", "launch_container.sh");
+						System.out.println(rank + " recv: " + split[0]);
+						startNewProcess(split[0], split[1], split[2]);
 					}					
 			}
 		} catch (MPIException e) {
@@ -45,10 +45,10 @@ public class Pool {
 		busyFlag[s] = 0;
 	}	
 	
-	public void startNewProcess(String prop, String className){
+	public void startNewProcess(String arg1, String arg2, String arg3){
 		int des = getFreeSLot();
 		if (des != NO_AVAILABLE_SLOT){
-			request(Lib.buildCommand(prop, className), des);
+			request(Lib.buildCommand(arg1, arg2, arg3), des);
 		}
 		busyFlag[des] = 1;
 	}

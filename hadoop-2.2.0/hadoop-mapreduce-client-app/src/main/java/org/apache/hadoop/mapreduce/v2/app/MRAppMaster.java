@@ -18,9 +18,13 @@
 
 package org.apache.hadoop.mapreduce.v2.app;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import mpi.MPI;
+import mpi.MPIException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -204,6 +209,10 @@ public class MRAppMaster extends CompositeService {
   private Credentials jobCredentials = new Credentials(); // Filled during init
   protected UserGroupInformation currentUser; // Will be setup during init
 
+  // Lock file (mrhpc)
+  private FileLock lock;
+  private FileChannel channel;
+  
   @VisibleForTesting
   protected volatile boolean isLastAMRetry = false;
   //Something happened and we should shut down right after we start up.
@@ -239,6 +248,23 @@ public class MRAppMaster extends CompositeService {
     this.metrics = MRAppMetrics.create();
     this.maxAppAttempts = maxAppAttempts;
     LOG.info("Created MRAppMaster for application " + applicationAttemptId);
+    
+    // Mrhpc lock file here
+		try {
+			int rank = MPI.COMM_WORLD.getRank();
+			  File file = new File(csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH + rank);
+			  if (!file.exists()){
+				  file.createNewFile();
+			  }
+			  channel = new RandomAccessFile(file, "rw").getChannel();    	
+			  lock = channel.lock();
+		} catch (MPIException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    
   }
 
   @Override
@@ -587,6 +613,15 @@ public class MRAppMaster extends CompositeService {
     //Not needed after HADOOP-7140
     LOG.info("Exiting MR AppMaster..GoodBye!");
     //sysexit();   
+
+    try {
+		lock.release();
+	    channel.close();
+	    DefaultMetricsSystem.shutdown();
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
  
   private class JobFinishEventHandler implements EventHandler<JobFinishEvent> {

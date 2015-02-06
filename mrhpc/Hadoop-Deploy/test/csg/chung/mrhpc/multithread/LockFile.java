@@ -2,6 +2,7 @@ package csg.chung.mrhpc.multithread;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
@@ -18,17 +19,34 @@ public class LockFile {
 		public void run() {
 			File file = new File(filePath);
 			try {
-				FileChannel channel = new RandomAccessFile(file, "rw")
-						.getChannel();
-				FileLock lock;
+				FileOutputStream fos= new FileOutputStream(file);
+				while(true){
+					FileLock lock = fos.getChannel().tryLock();
+					if (lock != null){
+						System.out.println("Get locked");
+						while(true){
+						
+						}
+					}else{
+						System.out.println("Being locking");
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				/*
 				while (true) {
 					try {
-						lock = channel.tryLock();
+						lock = fos.getChannel().tryLock();
 						System.out.println("Holding file");
 						Thread.sleep(5000);
-						lock.release();
-						channel.close();
-						break;
+						for (;;);
+						//lock.release();
+						//channel.close();
+						//break;
 					} catch (OverlappingFileLockException e) {
 						System.out.println("File is locked");
 						try {
@@ -43,6 +61,7 @@ public class LockFile {
 						e.printStackTrace();
 					}
 				}
+				*/
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -56,8 +75,8 @@ public class LockFile {
 	public LockFile() {
 		MyThread t1 = new MyThread();
 		t1.start();
-		MyThread t2 = new MyThread();
-		t2.start();
+		//MyThread t2 = new MyThread();
+		//t2.start();
 	}
 
 	public static void main(String[] args) {

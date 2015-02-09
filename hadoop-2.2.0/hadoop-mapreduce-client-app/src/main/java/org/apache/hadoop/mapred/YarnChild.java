@@ -105,8 +105,9 @@ public class YarnChild {
         StringUtils.camelize(firstTaskid.getTaskType().name()) +"Task");
 
     // Security framework already loaded the tokens into current ugi
+    UserGroupInformation.setLoginUser(null);    
     Credentials credentials =
-        UserGroupInformation.getCurrentUser().getCredentials();
+        UserGroupInformation.getLoginUser().getCredentials();
     LOG.info("Executing with tokens:");
     for (Token<?> token: credentials.getAllTokens()) {
       LOG.info(token);

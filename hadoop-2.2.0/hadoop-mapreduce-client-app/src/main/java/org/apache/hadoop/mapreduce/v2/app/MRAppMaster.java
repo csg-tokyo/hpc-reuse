@@ -1364,6 +1364,7 @@ public class MRAppMaster extends CompositeService {
       Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
       String containerIdStr =
           System.getenv(Environment.CONTAINER_ID.name());
+      System.out.println("Container: " + containerIdStr);
       String nodeHostString = System.getenv(Environment.NM_HOST.name());
       String nodePortString = System.getenv(Environment.NM_PORT.name());
       String nodeHttpPortString =
@@ -1398,8 +1399,10 @@ public class MRAppMaster extends CompositeService {
       ShutdownHookManager.get().addShutdownHook(
         new MRAppMasterShutdownHook(appMaster), SHUTDOWN_HOOK_PRIORITY);
       JobConf conf = new JobConf(new YarnConfiguration());
+      conf.set("mapreduce.job.credentials.binary", 
+    		  System.getenv("HADOOP_TOKEN_FILE_LOCATION"));       
       conf.addResource(new Path(MRJobConfig.JOB_CONF_FILE));
-      
+      System.out.println("Working dir: " + conf.getWorkingDirectory());
       // Explicitly disabling SSL for map reduce task as we can't allow MR users
       // to gain access to keystore file for opening SSL listener. We can trust
       // RM/NM to issue SSL certificates but definitely not MR-AM as it is
@@ -1466,8 +1469,9 @@ public class MRAppMaster extends CompositeService {
     UserGroupInformation.setConfiguration(conf);
     // Security framework already loaded the tokens into current UGI, just use
     // them
+    UserGroupInformation.setLoginUser(null);
     Credentials credentials =
-        UserGroupInformation.getCurrentUser().getCredentials();
+        UserGroupInformation.getLoginUser().getCredentials();
     LOG.info("Executing with tokens:");
     for (Token<?> token : credentials.getAllTokens()) {
       LOG.info(token);

@@ -88,7 +88,7 @@ public class Process {
 					SendRecv srFree = new SendRecv();
 					srFree.exchangeMsgSrc(rank, parent, free);
 					
-					t.resetSystemOutErr();
+					t.resetSetup();
 					
   			      lock1.release();
   			      fos.close();					

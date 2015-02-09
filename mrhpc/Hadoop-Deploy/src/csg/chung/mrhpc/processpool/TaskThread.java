@@ -14,6 +14,7 @@ import java.util.List;
 
 import mpi.MPI;
 
+import csg.chung.mrhpc.utils.Constants;
 import csg.chung.mrhpc.utils.Environment;
 import csg.chung.mrhpc.utils.Lib;
 
@@ -27,6 +28,8 @@ public class TaskThread extends Thread {
 	String exe;
 	PrintStream stdout;
 	PrintStream stderr;
+	List<String> setEnvKey, setEnvValue;
+	List<String> setPropKey, setPropValue;
 	
 	public TaskThread(String prop, String name) {
 		this.properties = prop;
@@ -39,7 +42,11 @@ public class TaskThread extends Thread {
 		// System output
 		stdout = System.out;
 		stderr = System.err;
-
+		setEnvKey = new ArrayList<String>();
+		setEnvValue = new ArrayList<String>();		
+		setPropKey = new ArrayList<String>();		
+		setPropValue = new ArrayList<String>();				
+		
 		args = new String[10];
 		count = 0;
 		startArg = false;
@@ -70,7 +77,14 @@ public class TaskThread extends Thread {
 		//System.out.println("Make dir: " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
 		Lib.runCommand("rm -rf " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
 		Lib.runCommand("mkdir " + FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());		
-		//System.out.println("User dir:" + System.getProperty("user.dir"));
+		System.out.println("User dir:" + System.getProperty("user.dir"));
+		if (System.getProperty("user.dir") != null){
+			setPropKey.add("user.dir");
+			setPropValue.add(System.getProperty("user.dir"));
+		}else{
+			setPropKey.add("user.dir");
+			setPropValue.add(Constants.UNKNOW);			
+		}
 		System.setProperty("user.dir", FX10.TMP_FOLDER + Lib.getHostname() + "/" + Lib.getRank());
 		System.out.println("User dir:" + System.getProperty("user.dir"));
 	}
@@ -78,6 +92,13 @@ public class TaskThread extends Thread {
 	public void lineAnalyze(String line){
 		String split[] = line.split(" ");
 		if (line.startsWith("export")){
+			if (System.getenv(split[1].split("=")[0]) != null){
+				setEnvKey.add(split[1].split("=")[0]);
+				setEnvValue.add(System.getenv(split[1].split("=")[0]));
+			}else{
+				setEnvKey.add(split[1].split("=")[0]);
+				setEnvValue.add(Constants.UNKNOW);				
+			}
 			Environment.setenv(split[1].split("=")[0], split[1].split("=")[1].replaceAll("\"", ""), true);
 		}else
 		if (line.startsWith("exec")){
@@ -85,6 +106,13 @@ public class TaskThread extends Thread {
 				exe = split[i];
 				startJava(split[i]);
 				// Set hostname
+				if (System.getProperty("hostname") != null){
+					setPropKey.add("hostname");
+					setPropValue.add(System.getProperty("hostname"));
+				}else{
+					setPropKey.add("hostname");
+					setPropValue.add(Constants.UNKNOW);			
+				}				
 				System.setProperty("hostname", Lib.getHostname());
 			}
 		}else{
@@ -98,7 +126,14 @@ public class TaskThread extends Thread {
 		//System.out.println(str);
 		if (str.startsWith("-D")){
 			String values[] = str.split("=");
-			System.setProperty(values[0].substring(2), values.length == 1 ? "":values[1]);			
+			if (System.getProperty(values[0].substring(2)) != null){
+				setPropKey.add(values[0].substring(2));
+				setPropValue.add(System.getProperty(values[0].substring(2)));
+			}else{
+				setPropKey.add(values[0].substring(2));
+				setPropValue.add(Constants.UNKNOW);			
+			}			
+			System.setProperty(values[0].substring(2), values.length == 1 ? "":values[1]);		
 		}
 		if (!str.startsWith("1>") && !str.startsWith("2>") && startArg  == true){
 			args[count] = str;
@@ -128,9 +163,28 @@ public class TaskThread extends Thread {
 		}		
 	}
 	
-	public void resetSystemOutErr(){
+	public void resetSetup(){
+		// Reset stdout and stderr
 		System.setOut(stdout);
 		System.setErr(stderr);
+		
+		// Reset variables
+		for (int i=0; i < setEnvKey.size(); i++){
+			if (setEnvValue.get(i).equals(Constants.UNKNOW)){
+				Environment.unsetenv(setEnvKey.get(i));
+			}else{
+				Environment.setenv(setEnvKey.get(i), setEnvValue.get(i), true);
+			}
+		}
+		
+		// Clear properties
+		for (int i=0; i < setPropKey.size(); i++){
+			if (setPropValue.get(i).equals(Constants.UNKNOW)){
+				System.clearProperty(setPropKey.get(i));
+			}else{
+				System.setProperty(setPropKey.get(i), setPropValue.get(i));
+			}
+		}		
 	}
 
 	public void run() {

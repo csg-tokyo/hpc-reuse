@@ -10,6 +10,7 @@ public class Pool {
 	public static final int NO_AVAILABLE_SLOT = -1;
 	private int rank;
 	private int[] busyFlag;
+	private int counter;
 	
 	public Pool(int rank){
 		this.rank = rank;
@@ -18,6 +19,7 @@ public class Pool {
 			busyFlag[i] = 0;
 		}
 		busyFlag[0] = 1;
+		counter = 0;
 	}
 	
 	public void waiting() {
@@ -54,13 +56,13 @@ public class Pool {
 	}
 	
 	public int getFreeSLot(){
-		for (int i=0; i < busyFlag.length; i++){
-			if (busyFlag[i] == 0){
-				return i;
+		for(;;){
+			if (busyFlag[counter] == 0){
+				return counter;
+			}else{
+				counter = (counter+1) % busyFlag.length;
 			}
 		}
-		
-		return NO_AVAILABLE_SLOT;
 	}
 		
 	public void request(String cmd, int des) {

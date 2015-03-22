@@ -10,6 +10,7 @@ public class TestLockObj {
 		
 		public MyThread(int id){
 			this.id = id;
+			for(;;);
 		}
 		
 		@Override

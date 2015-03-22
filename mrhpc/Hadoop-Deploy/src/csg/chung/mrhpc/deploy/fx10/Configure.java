@@ -6,6 +6,10 @@ public class Configure {
 	 * Deploying directory for whole data: source code, storage, logs, and so on.
 	 */
 	public final static String DEPLOY_FOLDER 			= "/mppxb/c83014/mrhpc/deploy";
+	
+	public final static String MAPREDUCE_JOB = "/mppxb/c83014/mrhpc/deploy/app-origin.sh";
+	public final static String CPU_LOG = "/mppxb/c83014/mrhpc/deploy/cpu_log_";		
+	
 	/**
 	 * Java home path. "/usr/local/java/openjdk7" is JAVA_HOME on FX10.
 	 */

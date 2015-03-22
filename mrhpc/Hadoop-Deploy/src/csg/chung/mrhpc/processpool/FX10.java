@@ -55,6 +55,7 @@ public class FX10 {
 	
 	public void startNonMPIProcess(){		
 		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
+			Lib.runCommand("java csg.chung.mrhpc.deploy.test.CPUUsage &> " + Configure.CPU_LOG + rank + ".txt &");
 			if (rank == 0){
 				initialize();
 				startNameNode(rank);
@@ -103,9 +104,17 @@ public class FX10 {
 				 MPI.COMM_WORLD.send(message, message.length, MPI.CHAR, i, 99);	
 			 }	 
 			 System.out.println("NameNode sending its IP address --> OK");
+			 
+			 // Run MapReduce job
+			 Thread.sleep(60*1000);
+			 Lib.runCommand(Configure.MAPREDUCE_JOB);
+			 System.out.println("Running MapReduce jobs");
 		} catch (MPIException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

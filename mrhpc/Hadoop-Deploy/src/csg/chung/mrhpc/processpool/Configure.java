@@ -22,6 +22,10 @@ public class Configure {
 	/**
 	 * Username on FX10
 	 */
+	
+	public final static String MAPREDUCE_JOB = "/mppxb/c83014/hadoopmpi/deploy/app-mrhpc.sh";
+	public final static String CPU_LOG = "/mppxb/c83014/hadoopmpi/deploy/cpu_log_";	
+	
 	public final static String USERNAME					= "c83014";
 	//public final static String USERNAME					= "14ITA182";
 	

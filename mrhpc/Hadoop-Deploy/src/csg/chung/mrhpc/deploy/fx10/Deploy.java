@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
+import csg.chung.mrhpc.utils.Lib;
+
 import mpi.MPI;
 import mpi.MPIException;
 
@@ -26,6 +28,7 @@ public class Deploy {
 			// Print node info
 			InetAddress ip = InetAddress.getLocalHost();
 			System.out.println("P" + rank + ": " + ip.getHostName() + " - " + ip.getHostAddress());	
+			Lib.runCommand("java csg.chung.mrhpc.deploy.test.CPUUsage &> " + Configure.CPU_LOG + rank + ".txt &");
 			
 			if (rank == 0){
 				// Master node
@@ -84,6 +87,13 @@ public class Deploy {
 			 for (int i=1; i < size; i++){
 				 MPI.COMM_WORLD.send(message, message.length, MPI.CHAR, i, 99);	
 			 }	 
+			 
+			 System.out.println("NameNode sending its IP address --> OK");
+			 
+			 // Run MapReduce job
+			 Thread.sleep(60*1000);
+			 Lib.runCommand(Configure.MAPREDUCE_JOB);
+			 System.out.println("Running MapReduce jobs");			 
 		} catch (MPIException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

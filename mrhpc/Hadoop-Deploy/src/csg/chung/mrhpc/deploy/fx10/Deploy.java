@@ -64,6 +64,7 @@ public class Deploy {
 			runCommand("mkdir " + DATA_FOLDER);
 			runCommand("mkdir " + TMP_FOLDER);
 			runCommand("mkdir " + HADOOP_FOLDER);
+			Lib.runCommand("mkdir " + Configure.ANALYSIS_LOG);			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

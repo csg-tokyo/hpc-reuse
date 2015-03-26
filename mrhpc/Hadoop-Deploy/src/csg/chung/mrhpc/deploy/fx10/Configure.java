@@ -9,6 +9,7 @@ public class Configure {
 	
 	public final static String MAPREDUCE_JOB = "/mppxb/c83014/mrhpc/deploy/app-origin.sh";
 	public final static String CPU_LOG = "/mppxb/c83014/mrhpc/deploy/cpu_log_";		
+	public final static String ANALYSIS_LOG = "/mppxb/c83014/mrhpc/deploy/log/";	
 	
 	/**
 	 * Java home path. "/usr/local/java/openjdk7" is JAVA_HOME on FX10.

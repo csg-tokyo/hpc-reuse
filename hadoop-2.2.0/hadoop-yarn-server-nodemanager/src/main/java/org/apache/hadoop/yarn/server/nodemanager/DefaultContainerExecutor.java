@@ -136,7 +136,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       List<String> localDirs, List<String> logDirs) throws IOException {
 
 	// Request log
-	String logDate = "request: " + new Date();  
+	String logDate = "request: " + new Date().getTime();  
 	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toString(container.getContainerId()), logDate);
 	  
     FsPermission dirPerm = new FsPermission(APPDIR_PERM);

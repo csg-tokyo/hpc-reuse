@@ -22,8 +22,8 @@ public class FX10 {
 			rank = MPI.COMM_WORLD.getRank();
 			size = MPI.COMM_WORLD.getSize() - Configure.NUMBER_PROCESS_EACH_NODE;
 			
-			if (rank >= size - Configure.NUMBER_PROCESS_EACH_NODE){
-				if (rank == size - Configure.NUMBER_PROCESS_EACH_NODE){
+			if (rank >= size){
+				if (rank == size){
 					 // Run MapReduce job
 					 Thread.sleep(60*1000);
 					 Lib.runCommand(Configure.MAPREDUCE_JOB);

@@ -76,7 +76,7 @@ public class YarnChild {
 
   public static void main(String[] args) throws Throwable {
 		// running log
-		String logDate = "running: " + new Date();  
+		String logDate = "running: " + new Date().getTime();
 		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	  
 	  
 	  LOG = LogFactory.getLog(YarnChild.class);
@@ -223,7 +223,7 @@ public class YarnChild {
       }
     } finally {
 		// terminating log
-		logDate = "terminating: " + new Date();  
+		logDate = "terminating: " + new Date().getTime();
 		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	      	
     	
       RPC.stopProxy(umbilical);

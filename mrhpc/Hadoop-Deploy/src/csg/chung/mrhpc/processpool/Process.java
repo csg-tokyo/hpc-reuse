@@ -37,7 +37,7 @@ public class Process {
 					break;
 				} else {
 					// loaded log
-					String logDate = "load: " + new Date();  
+					String logDate = "load: " + new Date().getTime();
 					csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + split[1], logDate);
 					
 		    		  File file1 = new File(csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH + split[1]);
@@ -99,7 +99,7 @@ public class Process {
   			      fos.close();		
   			      
 					// finishing log
-					logDate = "finishing: " + new Date();  
+					logDate = "finishing: " + new Date().getTime();  
 					csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + split[1], logDate);  			      
 				}
 			}

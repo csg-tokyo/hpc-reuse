@@ -20,15 +20,26 @@ public class FX10 {
 	public FX10(){
 		try {
 			rank = MPI.COMM_WORLD.getRank();
-			size = MPI.COMM_WORLD.getSize();
+			size = MPI.COMM_WORLD.getSize() - Configure.NUMBER_PROCESS_EACH_NODE;
 			
-			// Print node info
-			Lib.printNodeInfo(rank, size);
+			if (rank >= size - Configure.NUMBER_PROCESS_EACH_NODE){
+				if (rank == size - Configure.NUMBER_PROCESS_EACH_NODE){
+					 // Run MapReduce job
+					 Thread.sleep(60*1000);
+					 Lib.runCommand(Configure.MAPREDUCE_JOB);
+					 System.out.println("Running MapReduce jobs");					
+				}
+			}else{
+				// Print node info
+				Lib.printNodeInfo(rank, size);
 						
-			startNonMPIProcess();
-			startMPIProcess();
-			
+				startNonMPIProcess();
+				startMPIProcess();
+			}
 		}catch(MPIException e){
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}	
@@ -74,6 +85,7 @@ public class FX10 {
 		Lib.runCommand("mkdir " + TMP_FOLDER);
 		Lib.runCommand("mkdir " + HADOOP_FOLDER);
 		Lib.runCommand("mkdir " + Configure.LOCK_FILE_PATH);
+		Lib.runCommand("mkdir " + Configure.ANALYSIS_LOG);
 	}
 	
 	/**
@@ -104,17 +116,9 @@ public class FX10 {
 				 MPI.COMM_WORLD.send(message, message.length, MPI.CHAR, i, 99);	
 			 }	 
 			 System.out.println("NameNode sending its IP address --> OK");
-			 
-			 // Run MapReduce job
-			 Thread.sleep(60*1000);
-			 Lib.runCommand(Configure.MAPREDUCE_JOB);
-			 System.out.println("Running MapReduce jobs");
 		} catch (MPIException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

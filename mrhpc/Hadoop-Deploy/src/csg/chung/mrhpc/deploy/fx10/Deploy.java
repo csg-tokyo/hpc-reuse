@@ -24,22 +24,33 @@ public class Deploy {
 	public Deploy(){
 		try {
 			int rank = MPI.COMM_WORLD.getRank();
+			int size = MPI.COMM_WORLD.getSize();
 			
-			// Print node info
-			InetAddress ip = InetAddress.getLocalHost();
-			System.out.println("P" + rank + ": " + ip.getHostName() + " - " + ip.getHostAddress());	
-			Lib.runCommand("java csg.chung.mrhpc.deploy.test.CPUUsage &> " + Configure.CPU_LOG + rank + ".txt &");
-			
-			if (rank == 0){
-				// Master node
-				initialize();
-				startMaster(rank);
+			if (rank >= size - 1){
+				 // Run MapReduce job
+				 Thread.sleep(60*1000);
+				 Lib.runCommand(Configure.MAPREDUCE_JOB);
+				 System.out.println("Running MapReduce jobs");			 				
 			}else{
-				startSlaves(rank);
+				// Print node info
+				InetAddress ip = InetAddress.getLocalHost();
+				System.out.println("P" + rank + ": " + ip.getHostName() + " - " + ip.getHostAddress());	
+				Lib.runCommand("java csg.chung.mrhpc.deploy.test.CPUUsage &> " + Configure.CPU_LOG + rank + ".txt &");
+				
+				if (rank == 0){
+					// Master node
+					initialize();
+					startMaster(rank);
+				}else{
+					startSlaves(rank);
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (MPIException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -89,11 +100,6 @@ public class Deploy {
 			 }	 
 			 
 			 System.out.println("NameNode sending its IP address --> OK");
-			 
-			 // Run MapReduce job
-			 Thread.sleep(60*1000);
-			 Lib.runCommand(Configure.MAPREDUCE_JOB);
-			 System.out.println("Running MapReduce jobs");			 
 		} catch (MPIException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

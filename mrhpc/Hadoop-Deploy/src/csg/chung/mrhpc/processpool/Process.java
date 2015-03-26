@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.Arrays;
+import java.util.Date;
 
 import mpi.MPIException;
 import csg.chung.mrhpc.deploy.Constants;
@@ -35,6 +36,10 @@ public class Process {
 					t.start();
 					break;
 				} else {
+					// loaded log
+					String logDate = "load: " + new Date();  
+					csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + split[1], logDate);
+					
 		    		  File file1 = new File(csg.chung.mrhpc.processpool.Configure.LOCK_FILE_PATH + split[1]);
 		    		  if (!file1.exists()){
 		    			  file1.createNewFile();
@@ -91,7 +96,11 @@ public class Process {
 					t.resetSetup();
 					
   			      lock1.release();
-  			      fos.close();					
+  			      fos.close();		
+  			      
+					// finishing log
+					logDate = "finishing: " + new Date();  
+					csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + split[1], logDate);  			      
 				}
 			}
 		} catch (MPIException e) {

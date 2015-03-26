@@ -40,6 +40,7 @@ import java.nio.channels.FileLock;
 import java.nio.channels.OverlappingFileLockException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -134,6 +135,10 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       String userName, String appId, Path containerWorkDir,
       List<String> localDirs, List<String> logDirs) throws IOException {
 
+	// Request log
+	String logDate = "request: " + new Date();  
+	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toString(container.getContainerId()), logDate);
+	  
     FsPermission dirPerm = new FsPermission(APPDIR_PERM);
     ContainerId containerId = container.getContainerId();
 

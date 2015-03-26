@@ -27,6 +27,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -614,6 +615,10 @@ public class MRAppMaster extends CompositeService {
     LOG.info("Exiting MR AppMaster..GoodBye!");
     //sysexit();   
 
+	// terminating log
+	String logDate = "terminating: " + new Date();  
+	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + System.getenv(Environment.CONTAINER_ID.name()), logDate);      	      
+    
     try {
 		lock.release();
 	    channel.close();
@@ -1353,6 +1358,10 @@ public class MRAppMaster extends CompositeService {
   }
 
   public static void main(String[] args) {
+		// running log
+		String logDate = "running: " + new Date();  
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + System.getenv(Environment.CONTAINER_ID.name()), logDate);      	  
+	  
 	  LOG.info("MPI is initializing...");     
     try {
     	// MPI code is inserted here
@@ -1364,7 +1373,7 @@ public class MRAppMaster extends CompositeService {
       Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
       String containerIdStr =
           System.getenv(Environment.CONTAINER_ID.name());
-      System.out.println("Container: " + containerIdStr);
+      System.out.println("Container: " + containerIdStr);      
       String nodeHostString = System.getenv(Environment.NM_HOST.name());
       String nodePortString = System.getenv(Environment.NM_PORT.name());
       String nodeHttpPortString =

@@ -1,7 +1,9 @@
 package csg.chung.mrhpc.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -112,4 +114,24 @@ public class Lib {
 		}
 		return result;
 	}	
+	
+	public static void appendToFile(String filename, String data){
+		try{
+	   		File file =new File(filename);
+	
+			if(!file.exists()){
+				file.createNewFile();
+			}
+	
+			FileWriter fileWritter = new FileWriter(file.getName(),true);
+			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+			
+			bufferWritter.write(data + "\n");
+			
+			bufferWritter.close();		
+			fileWritter.close();
+		}catch(IOException ex){
+			
+		}
+	}
 }

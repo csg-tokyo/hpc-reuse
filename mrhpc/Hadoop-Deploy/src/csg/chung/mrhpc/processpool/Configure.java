@@ -26,6 +26,8 @@ public class Configure {
 	public final static String MAPREDUCE_JOB = "/mppxb/c83014/hadoopmpi/deploy/app-mrhpc.sh";
 	public final static String CPU_LOG = "/mppxb/c83014/hadoopmpi/deploy/cpu_log_";	
 	
+	public final static String ANALYSIS_LOG = "/mppxb/c83014/hadoopmpi/deploy/log/";
+	
 	public final static String USERNAME					= "c83014";
 	//public final static String USERNAME					= "14ITA182";
 	

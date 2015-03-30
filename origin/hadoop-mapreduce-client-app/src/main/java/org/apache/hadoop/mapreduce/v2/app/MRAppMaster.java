@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -528,6 +529,11 @@ public class MRAppMaster extends CompositeService {
 
   @VisibleForTesting
   public void shutDownJob() {
+	  
+		// terminating log
+		String logDate = "terminating: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + System.getenv(Environment.CONTAINER_ID.name()), logDate);      		  
+	  
     // job has finished
     // this is the only job, so shut down the Appmaster
     // note in a workflow scenario, this may lead to creation of a new
@@ -1316,6 +1322,10 @@ public class MRAppMaster extends CompositeService {
   }
 
   public static void main(String[] args) {
+		// running log
+		String logDate = "running: " + new Date().getTime();  
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + System.getenv(Environment.CONTAINER_ID.name()), logDate); 	  
+	  
     try {
       Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
       String containerIdStr =

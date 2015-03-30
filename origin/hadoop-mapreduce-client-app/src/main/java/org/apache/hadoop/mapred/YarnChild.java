@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -72,6 +73,11 @@ class YarnChild {
   static volatile TaskAttemptID taskid = null;
 
   public static void main(String[] args) throws Throwable {
+	  
+		// running log
+		String logDate = "running: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	  	  
+	  
     Thread.setDefaultUncaughtExceptionHandler(new YarnUncaughtExceptionHandler());
     LOG.debug("Child starting");
 
@@ -203,6 +209,10 @@ class YarnChild {
         umbilical.fatalError(taskid, cause);
       }
     } finally {
+		// terminating log
+		logDate = "terminating: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);    	
+    	
       RPC.stopProxy(umbilical);
       DefaultMetricsSystem.shutdown();
       // Shutting down log4j of the child-vm...

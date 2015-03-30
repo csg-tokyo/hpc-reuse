@@ -28,6 +28,7 @@ import java.io.PrintStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -112,7 +113,11 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       Path nmPrivateContainerScriptPath, Path nmPrivateTokensPath,
       String userName, String appId, Path containerWorkDir,
       List<String> localDirs, List<String> logDirs) throws IOException {
-
+	  
+	  // Request log
+	  String logDate = "request: " + new Date().getTime();  
+	  csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toString(container.getContainerId()), logDate);	  
+	  
     FsPermission dirPerm = new FsPermission(APPDIR_PERM);
     ContainerId containerId = container.getContainerId();
 
@@ -192,7 +197,14 @@ public class DefaultContainerExecutor extends ContainerExecutor {
           new File(containerWorkDir.toUri().getPath()),
           container.getLaunchContext().getEnvironment());      // sanitized env
       if (isContainerActive(containerId)) {
+    	  // load log
+    	  logDate = "load: " + new Date().getTime();  
+    	  csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toString(container.getContainerId()), logDate);	      	  
         shExec.execute();
+  	  // finishing log
+  	  logDate = "finishing: " + new Date().getTime();  
+  	  csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toString(container.getContainerId()), logDate);	      	  
+        
       }
       else {
         LOG.info("Container " + containerIdStr +

@@ -123,7 +123,7 @@ public class Lib {
 				file.createNewFile();
 			}
 	
-			FileWriter fileWritter = new FileWriter(file.getName(),true);
+			FileWriter fileWritter = new FileWriter(filename,true);
 			BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
 			
 			bufferWritter.write(data + "\n");

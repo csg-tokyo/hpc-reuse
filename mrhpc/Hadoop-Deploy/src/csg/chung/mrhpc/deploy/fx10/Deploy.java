@@ -18,15 +18,17 @@ public class Deploy {
 	public final static String TMP_FOLDER 				= Configure.DEPLOY_FOLDER + "/hadoop/tmp/";
 	public final static String HADOOP_FOLDER 			= Configure.DEPLOY_FOLDER + "/hadoop/code/";
 	
+	public int size;
+	
 	/**
 	 * Deploy Hadoop on every node
 	 */
 	public Deploy(){
 		try {
 			int rank = MPI.COMM_WORLD.getRank();
-			int size = MPI.COMM_WORLD.getSize();
+			size = MPI.COMM_WORLD.getSize() - 1;
 			
-			if (rank >= size - 1){
+			if (rank >= size){
 				 // Run MapReduce job
 				 Thread.sleep(60*1000);
 				 Lib.runCommand(Configure.MAPREDUCE_JOB);
@@ -95,7 +97,6 @@ public class Deploy {
 			
 			// Send master address to slave nodes
 			 char[] message = ip.getHostAddress().toCharArray();
-			 int size = MPI.COMM_WORLD.getSize();
 			 for (int i=1; i < size; i++){
 				 MPI.COMM_WORLD.send(message, message.length, MPI.CHAR, i, 99);	
 			 }	 

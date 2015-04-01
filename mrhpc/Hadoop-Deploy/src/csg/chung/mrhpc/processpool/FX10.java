@@ -66,6 +66,7 @@ public class FX10 {
 	
 	public void startNonMPIProcess(){		
 		if (rank % Configure.NUMBER_PROCESS_EACH_NODE == 0){
+			Lib.runCommand("mkdir " + Configure.ANALYSIS_LOG);			
 			Lib.runCommand("java csg.chung.mrhpc.deploy.test.CPUUsage &> " + Configure.CPU_LOG + rank + ".txt &");
 			if (rank == 0){
 				initialize();
@@ -85,7 +86,6 @@ public class FX10 {
 		Lib.runCommand("mkdir " + TMP_FOLDER);
 		Lib.runCommand("mkdir " + HADOOP_FOLDER);
 		Lib.runCommand("mkdir " + Configure.LOCK_FILE_PATH);
-		Lib.runCommand("mkdir " + Configure.ANALYSIS_LOG);
 	}
 	
 	/**

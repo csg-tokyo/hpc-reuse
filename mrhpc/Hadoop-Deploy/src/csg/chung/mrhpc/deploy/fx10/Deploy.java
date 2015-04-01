@@ -37,6 +37,7 @@ public class Deploy {
 				// Print node info
 				InetAddress ip = InetAddress.getLocalHost();
 				System.out.println("P" + rank + ": " + ip.getHostName() + " - " + ip.getHostAddress());	
+				Lib.runCommand("mkdir " + Configure.ANALYSIS_LOG);							
 				Lib.runCommand("java csg.chung.mrhpc.deploy.test.CPUUsage &> " + Configure.CPU_LOG + rank + ".txt &");
 				
 				if (rank == 0){
@@ -66,7 +67,6 @@ public class Deploy {
 			runCommand("mkdir " + DATA_FOLDER);
 			runCommand("mkdir " + TMP_FOLDER);
 			runCommand("mkdir " + HADOOP_FOLDER);
-			Lib.runCommand("mkdir " + Configure.ANALYSIS_LOG);			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {

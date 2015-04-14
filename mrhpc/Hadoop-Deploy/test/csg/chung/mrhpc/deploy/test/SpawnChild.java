@@ -11,7 +11,7 @@ public class SpawnChild {
 	
 	public SpawnChild() throws MPIException, UnknownHostException{
 		rank = MPI.COMM_WORLD.getRank();
-		//size = MPI.COMM_WORLD.getSize();
+		size = MPI.COMM_WORLD.getSize();
 		
 		InetAddress ip = InetAddress.getLocalHost();
 		System.out.println("Child " + rank + "/" + size + ": " + ip.getHostName()

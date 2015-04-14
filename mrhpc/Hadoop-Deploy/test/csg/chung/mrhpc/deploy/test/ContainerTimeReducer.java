@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerTime {
+public class ContainerTimeReducer {
 
 	public List<Long> request, load, run, terminate;
 	
-	public ContainerTime(String input) throws IOException{
+	public ContainerTimeReducer(String input, String startwith, long limit) throws IOException{
 		request = new ArrayList<Long>();
 		load = new ArrayList<Long>();
 		run = new ArrayList<Long>();
@@ -21,7 +21,8 @@ public class ContainerTime {
 		File[] listFiles = dir.listFiles();
 		
 		for (int i=0; i < listFiles.length; i++){
-			if (listFiles[i].getName().startsWith("container")){
+			if (listFiles[i].getName().startsWith(startwith)){
+				System.out.println(listFiles[i].getName());
 				FileReader fr = new FileReader(listFiles[i]);
 				BufferedReader read = new BufferedReader(fr);
 				
@@ -60,10 +61,55 @@ public class ContainerTime {
 			}
 		}
 		
-		printOne(request);
-		printOne(load);
-		printOne(run);
-		printOne(terminate);		
+		for (int i=0; i < load.size(); i++){
+			load.set(i, load.get(i) + request.get(i));
+		}
+		
+		//printOne(request);
+		//printOne(load);
+		//printOne(run);
+		printAll(load, run, limit);
+	}
+	
+	public void printAll(List<Long> a, List<Long> b, long limit){
+		System.out.println(a.size());
+		int count = 0;
+		for (int i=0; i < a.size(); i++){
+			if (a.get(i) > limit || b.get(i) > limit){
+				count++;
+				if (i < a.size() - 1){
+					System.out.print(a.get(i) + ",");
+				}else{
+					System.out.print(a.get(i));
+				}
+			}
+		}
+		
+		System.out.println();
+		
+		for (int i=0; i < a.size(); i++){
+			if (a.get(i) > limit || b.get(i) > limit){
+				if (i < b.size() - 1){
+					System.out.print(b.get(i) + ",");
+				}else{
+					System.out.print(b.get(i));
+				}
+			}
+		}
+		
+		System.out.println();
+		System.out.println(count);
+		for (int i=0; i < a.size(); i++){
+			if (a.get(i) < limit && b.get(i) < limit){
+				if (i < b.size() - 1){
+					System.out.print(terminate.get(i) + ",");
+				}else{
+					System.out.print(terminate.get(i));
+				}
+			}
+		}
+		
+		System.out.println();		
 	}
 	
 	public void printOne(List<Long> a){
@@ -90,6 +136,6 @@ public class ContainerTime {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTime("/Users/chung/Desktop/terasort-log");
+		new ContainerTimeReducer("/Users/chung/Desktop/4apps-small-origin/log", "container_1428991403001_0003", 80000);
 	}
 }

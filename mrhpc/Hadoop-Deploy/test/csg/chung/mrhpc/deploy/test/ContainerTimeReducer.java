@@ -136,6 +136,6 @@ public class ContainerTimeReducer {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTimeReducer("/Users/chung/Desktop/4apps-small-origin/log", "container_1428991403001_0003", 80000);
+		new ContainerTimeReducer("/Users/chung/Desktop/terasort-alone-mrhpc/log", "container_", 50000);
 	}
 }

@@ -9,16 +9,19 @@ import java.util.List;
 
 public class ContainerTimeMapper {
 
-	public List<Long> request, load, run, terminate;
+	public List<Long> request, load, run, terminate, startTime;
 	
 	public ContainerTimeMapper(String input, String startwith, long limit) throws IOException{
 		request = new ArrayList<Long>();
 		load = new ArrayList<Long>();
 		run = new ArrayList<Long>();
 		terminate = new ArrayList<Long>();
+		startTime = new ArrayList<Long>();
 		
 		File dir = new File(input);
 		File[] listFiles = dir.listFiles();
+		
+		long min = -1;
 		
 		for (int i=0; i < listFiles.length; i++){
 			if (listFiles[i].getName().startsWith(startwith)){
@@ -31,6 +34,11 @@ public class ContainerTimeMapper {
 				long loadT = getLong(read.readLine());
 				long runT = getLong(read.readLine());
 				long terminateT = getLong(read.readLine());
+				
+				startTime.add(start);
+				if (min == -1 || min > start){
+					min = start;
+				}
 				
 				if (requestT != -1){
 					request.add(requestT - start);
@@ -65,7 +73,15 @@ public class ContainerTimeMapper {
 			load.set(i, load.get(i) + request.get(i));
 		}
 		
-		printAll(load, run, limit);
+		System.out.println(min);
+		for (int i=0; i < startTime.size(); i++){
+			startTime.set(i, startTime.get(i) - min);
+		}
+		printOne(startTime);
+		printOne(load);
+		printOne(run);		
+		
+		//printAll(load, run, limit);
 	}
 	
 	public void printAll(List<Long> a, List<Long> b, long limit){
@@ -122,6 +138,8 @@ public class ContainerTimeMapper {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTimeMapper("/Users/chung/Desktop/4apps-small-origin/log", "", 80000);
+		new ContainerTimeMapper("/Users/chung/Desktop/pi-4nodes-jit-origin", "container", 30000);
+		//new ContainerTimeMapper("/Users/chung/Desktop/4apps-small-mrhpc", "container_1429668780616_0004", 30000);
+		//new ContainerTimeMapper("/Users/chung/Desktop/4apps-small-origin", "container_1429668456958_0004", 30000);
 	}
 }

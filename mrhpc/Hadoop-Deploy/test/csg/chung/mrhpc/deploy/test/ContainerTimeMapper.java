@@ -9,12 +9,13 @@ import java.util.List;
 
 public class ContainerTimeMapper {
 
-	public List<Long> request, load, run, terminate, startTime;
+	public List<Long> request, load, run, application,terminate, startTime;
 	
 	public ContainerTimeMapper(String input, String startwith, long limit) throws IOException{
 		request = new ArrayList<Long>();
 		load = new ArrayList<Long>();
 		run = new ArrayList<Long>();
+		application = new ArrayList<Long>();
 		terminate = new ArrayList<Long>();
 		startTime = new ArrayList<Long>();
 		
@@ -33,6 +34,7 @@ public class ContainerTimeMapper {
 				long requestT = getLong(read.readLine());
 				long loadT = getLong(read.readLine());
 				long runT = getLong(read.readLine());
+				long appT = getLong(read.readLine());
 				long terminateT = getLong(read.readLine());
 				
 				startTime.add(start);
@@ -58,8 +60,14 @@ public class ContainerTimeMapper {
 					run.add((long) 0);
 				}
 				
+				if (appT != -1){
+					application.add(appT - runT);
+				}else{
+					application.add((long) 0);
+				}
+				
 				if (terminateT != -1){
-					terminate.add(terminateT - runT);
+					terminate.add(terminateT - appT);
 				}else{
 					terminate.add((long) 0);
 				}
@@ -79,7 +87,8 @@ public class ContainerTimeMapper {
 		}
 		printOne(startTime);
 		printOne(load);
-		printOne(run);		
+		printOne(run);	
+		printOne(application);
 		
 		//printAll(load, run, limit);
 	}

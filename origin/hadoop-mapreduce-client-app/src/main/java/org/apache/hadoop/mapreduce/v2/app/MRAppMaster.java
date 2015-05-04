@@ -529,6 +529,9 @@ public class MRAppMaster extends CompositeService {
 
   @VisibleForTesting
   public void shutDownJob() {
+		// application log
+		String appDate = "application: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + System.getenv(Environment.CONTAINER_ID.name()), appDate);      		  
 	  
 		// terminating log
 		String logDate = "terminating: " + new Date().getTime();

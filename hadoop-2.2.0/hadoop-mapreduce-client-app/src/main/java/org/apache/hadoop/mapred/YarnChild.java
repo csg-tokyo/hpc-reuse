@@ -176,6 +176,10 @@ public class YarnChild {
         @Override
         public Object run() throws Exception {
           // use job-specified working directory
+    		// application running log
+    		String logDate = "application: " + new Date().getTime();
+    		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	  
+        	        	
           FileSystem.get(job).setWorkingDirectory(job.getWorkingDirectory());
           taskFinal.run(job, umbilical); // run the task
           return null;

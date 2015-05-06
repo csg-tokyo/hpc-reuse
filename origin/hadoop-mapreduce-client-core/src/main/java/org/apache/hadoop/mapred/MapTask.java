@@ -712,6 +712,8 @@ public class MapTask extends Task {
                     TaskReporter reporter
                     ) throws IOException, ClassNotFoundException,
                              InterruptedException {
+	  LOG.info("Start");  
+	  
     // make a task context so we can get the classes
     org.apache.hadoop.mapreduce.TaskAttemptContext taskContext =
       new org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl(job, 
@@ -721,11 +723,13 @@ public class MapTask extends Task {
     org.apache.hadoop.mapreduce.Mapper<INKEY,INVALUE,OUTKEY,OUTVALUE> mapper =
       (org.apache.hadoop.mapreduce.Mapper<INKEY,INVALUE,OUTKEY,OUTVALUE>)
         ReflectionUtils.newInstance(taskContext.getMapperClass(), job);
+	  LOG.info("Make a mapper");
     // make the input format
     org.apache.hadoop.mapreduce.InputFormat<INKEY,INVALUE> inputFormat =
       (org.apache.hadoop.mapreduce.InputFormat<INKEY,INVALUE>)
         ReflectionUtils.newInstance(taskContext.getInputFormatClass(), job);
     // rebuild the input split
+    LOG.info("Make split");
     org.apache.hadoop.mapreduce.InputSplit split = null;
     split = getSplitDetails(new Path(splitIndex.getSplitLocation()),
         splitIndex.getStartOffset());
@@ -734,33 +738,37 @@ public class MapTask extends Task {
     org.apache.hadoop.mapreduce.RecordReader<INKEY,INVALUE> input =
       new NewTrackingRecordReader<INKEY,INVALUE>
         (split, inputFormat, reporter, taskContext);
-    
+    LOG.info("1");
     job.setBoolean(JobContext.SKIP_RECORDS, isSkipping());
     org.apache.hadoop.mapreduce.RecordWriter output = null;
-    
+    LOG.info("2");
     // get an output object
     if (job.getNumReduceTasks() == 0) {
       output = 
         new NewDirectOutputCollector(taskContext, job, umbilical, reporter);
+      LOG.info("3");
     } else {
       output = new NewOutputCollector(taskContext, job, umbilical, reporter);
+      LOG.info("33");
     }
-
     org.apache.hadoop.mapreduce.MapContext<INKEY, INVALUE, OUTKEY, OUTVALUE> 
     mapContext = 
       new MapContextImpl<INKEY, INVALUE, OUTKEY, OUTVALUE>(job, getTaskID(), 
           input, output, 
           committer, 
           reporter, split);
-
+    LOG.info("4");
     org.apache.hadoop.mapreduce.Mapper<INKEY,INVALUE,OUTKEY,OUTVALUE>.Context 
         mapperContext = 
           new WrappedMapper<INKEY, INVALUE, OUTKEY, OUTVALUE>().getMapContext(
               mapContext);
 
     try {
+  	  LOG.info("Start computing");
       input.initialize(split, mapperContext);
+	  LOG.info("Start running");
       mapper.run(mapperContext);
+	  LOG.info("Finish running");
       mapPhase.complete();
       setPhase(TaskStatus.Phase.SORT);
       statusUpdate(umbilical);
@@ -768,6 +776,7 @@ public class MapTask extends Task {
       input = null;
       output.close(mapperContext);
       output = null;
+	  LOG.info("Finish");
     } finally {
       closeQuietly(input);
       closeQuietly(output, mapperContext);

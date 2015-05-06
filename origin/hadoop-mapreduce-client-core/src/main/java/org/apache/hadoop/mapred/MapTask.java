@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -72,6 +73,8 @@ import org.apache.hadoop.util.QuickSort;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.hadoop.util.StringInterner;
 import org.apache.hadoop.util.StringUtils;
+import org.apache.hadoop.yarn.api.ApplicationConstants.Environment;
+import org.apache.hadoop.yarn.util.ConverterUtils;
 
 /** A Map task. */
 @InterfaceAudience.LimitedPrivate({"MapReduce"})
@@ -334,6 +337,8 @@ public class MapTask extends Task {
       runTaskCleanupTask(umbilical, reporter);
       return;
     }
+	String logDate = "application 2: " + new Date().getTime();
+	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	  
 
     if (useNewApi) {
       runNewMapper(job, splitMetaInfo, umbilical, reporter);
@@ -766,8 +771,14 @@ public class MapTask extends Task {
     try {
   	  LOG.info("Start computing");
       input.initialize(split, mapperContext);
+		String logDate3 = "application 3: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate3);	  
+      
 	  LOG.info("Start running");
       mapper.run(mapperContext);
+		String logDate4 = "application 4: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate4);	  
+      
 	  LOG.info("Finish running");
       mapPhase.complete();
       setPhase(TaskStatus.Phase.SORT);
@@ -776,6 +787,9 @@ public class MapTask extends Task {
       input = null;
       output.close(mapperContext);
       output = null;
+		String logDate5 = "application 5: " + new Date().getTime();
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate5);	  
+      
 	  LOG.info("Finish");
     } finally {
       closeQuietly(input);

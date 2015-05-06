@@ -269,5 +269,6 @@
 	<classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5.jar" sourcepath="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/tomcat/jasper-compiler/5.5.23/jasper-compiler-5.5.23.jar"/>
 	<classpathentry kind="lib" path="/Users/chung/hadoop/mpi.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Hadoop-Deploy"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -338,7 +338,7 @@ public class MapTask extends Task {
       return;
     }
 	String logDate = "application 2: " + new Date().getTime();
-	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	  
+	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate);	  
 
     if (useNewApi) {
       runNewMapper(job, splitMetaInfo, umbilical, reporter);
@@ -772,12 +772,12 @@ public class MapTask extends Task {
   	  LOG.info("Start computing");
       input.initialize(split, mapperContext);
 		String logDate3 = "application 3: " + new Date().getTime();
-		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate3);	  
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate3);	  
       
 	  LOG.info("Start running");
       mapper.run(mapperContext);
 		String logDate4 = "application 4: " + new Date().getTime();
-		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate4);	  
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate4);	  
       
 	  LOG.info("Finish running");
       mapPhase.complete();
@@ -788,7 +788,7 @@ public class MapTask extends Task {
       output.close(mapperContext);
       output = null;
 		String logDate5 = "application 5: " + new Date().getTime();
-		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate5);	  
+		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate5);	  
       
 	  LOG.info("Finish");
     } finally {

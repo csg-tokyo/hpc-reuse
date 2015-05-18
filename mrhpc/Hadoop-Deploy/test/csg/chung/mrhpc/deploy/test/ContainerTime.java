@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ContainerTime {
 
-	public List<Long> request, load, run, app1, app2, app3, app4, app5, terminate, startTime;
+	public List<Long> request, load, run, app1, app2, app3, app4, app5, app6, terminate, startTime;
 	
 	public ContainerTime(String input, String startwith, long limit) throws IOException{
 		request = new ArrayList<Long>();
@@ -20,6 +20,7 @@ public class ContainerTime {
 		app3 = new ArrayList<Long>();
 		app4 = new ArrayList<Long>();
 		app5 = new ArrayList<Long>();		
+		app6 = new ArrayList<Long>();				
 		terminate = new ArrayList<Long>();
 		startTime = new ArrayList<Long>();
 		
@@ -43,6 +44,7 @@ public class ContainerTime {
 				long appT3 = getLong(read.readLine());
 				long appT4 = getLong(read.readLine());
 				long appT5 = getLong(read.readLine());				
+				long appT6 = getLong(read.readLine());								
 				long terminateT = getLong(read.readLine());
 				
 				startTime.add(start);
@@ -97,9 +99,15 @@ public class ContainerTime {
 				}else{
 					app5.add((long) 0);
 				}
+
+				if (appT6 != -1){
+					app6.add(appT6 - appT5);
+				}else{
+					app6.add((long) 0);
+				}				
 				
 				if (terminateT != -1){
-					terminate.add(terminateT - appT5);
+					terminate.add(terminateT - appT6);
 				}else{
 					terminate.add((long) 0);
 				}
@@ -126,6 +134,7 @@ public class ContainerTime {
 		printOne(app3);
 		printOne(app4);
 		printOne(app5);		
+		printOne(app6);				
 	}
 		
 	public void printOne(List<Long> a){
@@ -152,6 +161,6 @@ public class ContainerTime {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTime("/Users/chung/Desktop/pi-4nodes-mrhpc", "container", 30000);
+		new ContainerTime("/Users/chung/Desktop/terasort-4nodes-origin", "container", 30000);
 	}
 }

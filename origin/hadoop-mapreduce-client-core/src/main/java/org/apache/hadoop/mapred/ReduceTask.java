@@ -357,6 +357,9 @@ public class ReduceTask extends Task {
       isLocal = true;
     }
     
+	String logDate1 = "application 1: " + new Date().getTime();
+	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate1);	          
+    
     if (!isLocal) {
       Class combinerClass = conf.getCombinerClass();
       CombineOutputCollector combineCollector = 
@@ -394,6 +397,9 @@ public class ReduceTask extends Task {
                            job.getOutputKeyComparator(),
                            reporter, spilledRecordsCounter, null, null);
     }
+	String logDate2 = "application 2: " + new Date().getTime();
+	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate2);	      
+
     // free up the data structures
     mapOutputFilesOnDisk.clear();
     
@@ -403,9 +409,6 @@ public class ReduceTask extends Task {
     Class keyClass = job.getMapOutputKeyClass();
     Class valueClass = job.getMapOutputValueClass();
     RawComparator comparator = job.getOutputValueGroupingComparator();
-
-	String logDate2 = "application 2: " + new Date().getTime();
-	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.deploy.fx10.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate2);	      
     
     if (useNewApi) {
       runNewReducer(job, umbilical, reporter, rIter, comparator, 

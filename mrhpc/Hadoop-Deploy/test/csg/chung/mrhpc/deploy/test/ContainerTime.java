@@ -122,21 +122,56 @@ public class ContainerTime {
 		}
 		
 		System.out.println(min);
+		System.out.println(startTime.size());
 		for (int i=0; i < startTime.size(); i++){
 			startTime.set(i, startTime.get(i) - min);
 		}
 		
 		printOne(startTime);
+		load = merge(load, run);
 		printOne(load);
-		printOne(run);	
 		printOne(app1);
 		printOne(app2);
 		printOne(app3);
 		printOne(app4);
+		app5 = merge(app5, app6);
 		printOne(app5);		
-		printOne(app6);				
+		
+		// Print start-up time
+		System.out.println(sum(load, 50000));
+		System.out.println(sum(load)+sum(app1)+sum(app2)+sum(app3)+sum(app4)+sum(app5));
 	}
 		
+	public long sum(List<Long> a, int threshold){
+		long result = 0;
+		
+		for (int i=0; i < a.size(); i++){
+			if (a.get(i) < threshold){
+				result += a.get(i);
+			}
+		}
+		
+		return result;
+	}
+	
+	public long sum(List<Long> a){
+		long result = 0;
+		
+		for (int i=0; i < a.size(); i++){
+			result += a.get(i);
+		}
+		
+		return result;
+	}	
+	
+	public List<Long> merge(List<Long> a, List<Long> b){
+		for (int i=0; i < a.size(); i++){
+			a.set(i, a.get(i) + b.get(i));
+		}
+		
+		return a;
+	}
+	
 	public void printOne(List<Long> a){
 		for (int i=0; i < a.size(); i++){
 			if (i < a.size() - 1){
@@ -147,7 +182,7 @@ public class ContainerTime {
 		}
 		
 		System.out.println();
-		System.out.println(a.size());
+		//System.out.println(a.size());
 	}
 	
 	public long getLong(String line){
@@ -161,6 +196,6 @@ public class ContainerTime {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTime("/Users/chung/Desktop/terasort-4nodes-origin", "container", 30000);
+		new ContainerTime("/Users/chung/Desktop/pagerank-8nodes-8iter-mrhpc", "container", 30000);
 	}
 }

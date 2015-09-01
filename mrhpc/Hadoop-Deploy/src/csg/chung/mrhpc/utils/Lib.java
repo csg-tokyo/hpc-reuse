@@ -27,6 +27,17 @@ public class Lib {
 		}
 	}
 	
+	public static void printNodeInfo(int rank, int size, String prefix){
+		try {
+			InetAddress ip = InetAddress.getLocalHost();
+			long memory = Runtime.getRuntime().maxMemory();
+			System.out.println(prefix + " P" + rank + "/" + size + ": " + ip.getHostName() + " - " + ip.getHostAddress() + " --> memory: " + memory);						
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}	
+	
 	public static String getHostname(){
 		try {
 			InetAddress ip = InetAddress.getLocalHost();

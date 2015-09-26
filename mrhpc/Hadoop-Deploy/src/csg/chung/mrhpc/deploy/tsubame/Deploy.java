@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 
+import csg.chung.mrhpc.utils.Lib;
+
 import mpi.MPI;
 import mpi.MPIException;
 
@@ -31,12 +33,19 @@ public class Deploy {
 				// Master node
 				initialize();
 				startMaster(rank);
+				
+				// Start job
+				Thread.sleep(60*1000);
+				Lib.runCommand(Configure.MAPREDUCE_JOB);
 			}else{
 				startSlaves(rank);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (MPIException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

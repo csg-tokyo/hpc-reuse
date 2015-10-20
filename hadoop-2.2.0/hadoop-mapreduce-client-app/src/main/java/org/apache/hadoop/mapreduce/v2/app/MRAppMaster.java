@@ -1364,6 +1364,7 @@ public class MRAppMaster extends CompositeService {
   public static void main(String[] args) {
 		// running log
 		String logDate = "running: " + new Date().getTime();  
+		csg.chung.mrhpc.processpool.Configure.setTsubame();
 		csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + System.getenv(Environment.CONTAINER_ID.name()), logDate);      	  
 	  
 	  LOG.info("MPI is initializing...");     

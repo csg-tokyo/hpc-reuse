@@ -11,7 +11,8 @@ public class Configure {
 	 * Note: don't add / in the end of the path
 	 */
 	public static String DEPLOY_FOLDER 			= "/mppxb/c83014/hadoopmpi/deploy";
-
+	public static String DATA_FOLDER 			= "/mppxb/c83014/hadoopmpi/deploy";
+	
 	/**
 	 * Java home path. "/usr/local/java/openjdk7" is JAVA_HOME on FX10.
 	 */
@@ -48,6 +49,7 @@ public class Configure {
 	public static void setTsubame(){
 		HADOOP_TAR_GZ_FILE 		= "/work1/t2gcrest-masuhara/chung/hadoop-mrhpc/deploy/hadoop.tar.gz";			
 		DEPLOY_FOLDER 			= "/work1/t2gcrest-masuhara/chung/hadoop-mrhpc/deploy";	
+		DATA_FOLDER				= "/work1/t2gcrest-masuhara/chung/hdfs";
 		JAVA_HOME				= "/home/usr9/14ITA182/.local/jdk1.7.0_65";	
 		USERNAME				= "14ITA182";		
 		

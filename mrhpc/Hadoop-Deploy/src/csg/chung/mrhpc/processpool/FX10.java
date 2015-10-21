@@ -10,7 +10,7 @@ import csg.chung.mrhpc.utils.Lib;
 
 public class FX10 {
 	/* Don't change the below constants */
-	public final static String DATA_FOLDER 				= Configure.DEPLOY_FOLDER + "/hadoop/data/";
+	public final static String DATA_FOLDER 				= Configure.DATA_FOLDER + "/";
 	public final static String TMP_FOLDER 				= Configure.DEPLOY_FOLDER + "/hadoop/tmp/";
 	public final static String HADOOP_FOLDER 			= Configure.DEPLOY_FOLDER + "/hadoop/code/";
 	public final static String OPENMPI_JAVA_LIB 		= Configure.DEPLOY_FOLDER + "/openmpi/lib/";	
@@ -82,7 +82,6 @@ public class FX10 {
 	 */
 	public void initialize(){
 		Lib.runCommand("mkdir " + Configure.DEPLOY_FOLDER + "/hadoop");
-		Lib.runCommand("mkdir " + DATA_FOLDER);
 		Lib.runCommand("mkdir " + TMP_FOLDER);
 		Lib.runCommand("mkdir " + HADOOP_FOLDER);
 		Lib.runCommand("mkdir " + Configure.LOCK_FILE_PATH);
@@ -99,7 +98,7 @@ public class FX10 {
 			generateCode(rank, ip.getHostAddress());
 			
 			// Start master
-			File folder = new File(FX10.DATA_FOLDER + rank);
+			File folder = new File(FX10.DATA_FOLDER + (rank/Configure.NUMBER_PROCESS_EACH_NODE));
 			if (folder.isDirectory() && folder.list().length == 0){
 				Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/bin/hdfs namenode -format");
 				System.out.println("Format Namenode --> OK");
@@ -158,9 +157,9 @@ public class FX10 {
 	 * @param masterAddress
 	 */
 	public void generateCode(int rank, String masterAddress){
-		File dataFolder = new File(FX10.DATA_FOLDER + rank);
+		File dataFolder = new File(FX10.DATA_FOLDER + (rank/Configure.NUMBER_PROCESS_EACH_NODE));
 		if (!dataFolder.exists()){
-			Lib.runCommand("mkdir " + DATA_FOLDER + rank);
+			Lib.runCommand("mkdir " + DATA_FOLDER + (rank/Configure.NUMBER_PROCESS_EACH_NODE));
 		}
 		
 		File tmpFolder = new File(FX10.TMP_FOLDER + Lib.getHostname());
@@ -183,7 +182,7 @@ public class FX10 {
 		Lib.runCommand("sed -i.bak 's/MRHPC_TMP_FOLDER/" + (TMP_FOLDER + "${hostname}" ).replaceAll("/", "\\\\/") + "/g' " + HADOOP_INSTALL + "/etc/hadoop/core-site.xml");
 			
 		// HDFS
-		Lib.runCommand("sed -i.bak 's/MRHPC_DATA_FOLDER/" + DATA_FOLDER.replaceAll("/", "\\\\/") + rank + "/g' " + HADOOP_INSTALL + "/etc/hadoop/hdfs-site.xml");
+		Lib.runCommand("sed -i.bak 's/MRHPC_DATA_FOLDER/" + DATA_FOLDER.replaceAll("/", "\\\\/") + (rank/Configure.NUMBER_PROCESS_EACH_NODE) + "/g' " + HADOOP_INSTALL + "/etc/hadoop/hdfs-site.xml");
 		Lib.runCommand("sed -i.bak 's/MRHPC_USERNAME/" + Configure.USERNAME + "/g' " + HADOOP_INSTALL + "/etc/hadoop/hdfs-site.xml");
 		
 		// YARN

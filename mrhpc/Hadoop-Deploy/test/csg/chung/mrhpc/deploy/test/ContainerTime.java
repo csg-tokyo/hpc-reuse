@@ -35,10 +35,15 @@ public class ContainerTime {
 				FileReader fr = new FileReader(listFiles[i]);
 				BufferedReader read = new BufferedReader(fr);
 				
+				// Read request
 				long start = getLong(read.readLine());
+				// Read load
 				long requestT = getLong(read.readLine());
+				// Read running
 				long loadT = getLong(read.readLine());
+				// Read App1
 				long runT = getLong(read.readLine());
+				// Read next app
 				long appT1 = getLong(read.readLine());
 				long appT2 = getLong(read.readLine());
 				long appT3 = getLong(read.readLine());
@@ -127,15 +132,17 @@ public class ContainerTime {
 			startTime.set(i, startTime.get(i) - min);
 		}
 		
-		printOne(startTime);
-		load = merge(load, run);
-		printOne(load);
-		printOne(app1);
+		printOne(startTime); // Starting time
+		//load = merge(load, run);
+		printOne(load); // From request to running: Process start-up
+		printOne(run);  // From running to app1: Env. variable reading & User login
+		printOne(app1); // From app1 --> app2: Task initializing (e.g. config file reading)
 		printOne(app2);
 		printOne(app3);
 		printOne(app4);
-		app5 = merge(app5, app6);
+		//app5 = merge(app5, app6);
 		printOne(app5);		
+		printOne(app6);
 		
 		// Print start-up time
 		System.out.println(sum(load, 50000));
@@ -196,6 +203,6 @@ public class ContainerTime {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTime("/Users/chung/Desktop/pagerank-8nodes-8iter-mrhpc", "container", 30000);
+		new ContainerTime("/Users/chung/Desktop/4nodes-terasort-mrhpc-noreset", "container", 30000);
 	}
 }

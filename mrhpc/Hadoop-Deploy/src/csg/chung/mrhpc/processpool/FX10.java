@@ -25,7 +25,7 @@ public class FX10 {
 			if (rank >= size){
 				if (rank == size){
 					 // Run MapReduce job
-					 Thread.sleep(60*1000);
+					 Thread.sleep(120*1000);
 					 Lib.runCommand(Configure.MAPREDUCE_JOB);
 					 System.out.println("Running MapReduce jobs");					
 				}

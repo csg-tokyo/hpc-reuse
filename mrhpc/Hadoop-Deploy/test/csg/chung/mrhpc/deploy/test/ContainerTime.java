@@ -11,7 +11,7 @@ public class ContainerTime {
 
 	public List<Long> request, load, run, app1, app2, app3, app4, app5, app6, terminate, startTime;
 	
-	public ContainerTime(String input, String startwith, long limit) throws IOException{
+	public ContainerTime(String input, String startwith, int flagSpawn) throws IOException{
 		request = new ArrayList<Long>();
 		load = new ArrayList<Long>();
 		run = new ArrayList<Long>();
@@ -41,6 +41,9 @@ public class ContainerTime {
 				long requestT = getLong(read.readLine());
 				// Read running
 				long loadT = getLong(read.readLine());
+				if (flagSpawn == 1){
+					read.readLine();
+				}				
 				// Read App1
 				long runT = getLong(read.readLine());
 				// Read next app
@@ -203,6 +206,6 @@ public class ContainerTime {
 	}
 	
 	public static void main(String args[]) throws IOException{
-		new ContainerTime("/Users/chung/Desktop/4nodes-terasort-mrhpc-noreset", "container", 30000);
+		new ContainerTime("/Users/chung/Desktop/32nodes-terasort-spawn", "container", 1);
 	}
 }

@@ -137,7 +137,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
 
 	// Request log
 	String logDate = "request: " + new Date().getTime();  
-	csg.chung.mrhpc.processpool.Configure.setTsubame();
+	csg.chung.mrhpc.processpool.Configure.setFX10();
 	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toString(container.getContainerId()), logDate);
 	  
     FsPermission dirPerm = new FsPermission(APPDIR_PERM);

@@ -338,7 +338,7 @@ public class MapTask extends Task {
       return;
     }
 	String logDate1 = "application 1: " + new Date().getTime();
-	csg.chung.mrhpc.processpool.Configure.setTsubame();
+	csg.chung.mrhpc.processpool.Configure.setFX10();
 	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate1);	  
 
     String logDate = "application 2: " + new Date().getTime();

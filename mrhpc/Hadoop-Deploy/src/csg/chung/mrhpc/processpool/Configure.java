@@ -4,14 +4,14 @@ public class Configure {
 	/**
 	 * Running file
 	 */
-	public static String HADOOP_TAR_GZ_FILE 		= "/mppxb/c83014/hadoopmpi/deploy/hadoop.tar.gz";	
+	public static String HADOOP_TAR_GZ_FILE 		= "/group/gc83/c83014/hadoop-mrhpc/deploy/hadoop.tar.gz";	
 	
 	/**
 	 * Deploying directory for whole data: source code, storage, logs, and so on. 
 	 * Note: don't add / in the end of the path
 	 */
-	public static String DEPLOY_FOLDER 			= "/mppxb/c83014/hadoopmpi/deploy";
-	public static String DATA_FOLDER 			= "/mppxb/c83014/hadoopmpi/deploy";
+	public static String DEPLOY_FOLDER 			= "/group/gc83/c83014/hadoop-mrhpc/deploy";
+	public static String DATA_FOLDER 			= "/group/gc83/c83014/hdfs";
 	
 	/**
 	 * Java home path. "/usr/local/java/openjdk7" is JAVA_HOME on FX10.
@@ -26,20 +26,20 @@ public class Configure {
 	/**
 	 * Apps
 	 */
-	public static String MAPREDUCE_JOB = "/mppxb/c83014/hadoopmpi/deploy/app-mrhpc.sh";
+	public static String MAPREDUCE_JOB 	= DEPLOY_FOLDER + "/apps.sh";
 
 	/**
 	 * Log
 	 */
-	public static String CPU_LOG = "/mppxb/c83014/hadoopmpi/deploy/log/cpu_log_";	
-	public static String ANALYSIS_LOG = "/mppxb/c83014/hadoopmpi/deploy/log/";	
+	public static String CPU_LOG 		= DEPLOY_FOLDER + "/log/cpu_log_";	
+	public static String ANALYSIS_LOG 	= DEPLOY_FOLDER + "/log/";		
 	
 	/**
 	 * Running time for Hadoop cluster
 	 */
 	public static String ELAPSED_TIME				= "00:30:00";	
 	
-	public static int NUMBER_PROCESS_EACH_NODE 	= 8;
+	public static int NUMBER_PROCESS_EACH_NODE 	= 6;
 	
 	/**
 	 * Lock file
@@ -63,5 +63,8 @@ public class Configure {
 		NUMBER_PROCESS_EACH_NODE= 6;	
 	
 		LOCK_FILE_PATH = DEPLOY_FOLDER + "/hadoop/lock/";		
+	}
+	
+	public static void setFX10(){
 	}
 }

@@ -26,6 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,8 @@ import org.apache.hadoop.mapreduce.MRJobConfig;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.security.SecureShuffleUtils;
 import org.apache.hadoop.security.ssl.SSLFactory;
+import org.apache.hadoop.yarn.api.ApplicationConstants.Environment;
+import org.apache.hadoop.yarn.util.ConverterUtils;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -155,14 +158,32 @@ class Fetcher<K,V> extends Thread {
         MapHost host = null;
         try {
           // If merge is on, block
+          	String logDate1 = "Sub Merging start: " + new Date().getTime();
+        	csg.chung.mrhpc.processpool.Configure.setFX10();
+        	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate1);	                            	
           merger.waitForResource();
-
+        	String logDate2 = "Sub Merging end: " + new Date().getTime();
+        	csg.chung.mrhpc.processpool.Configure.setFX10();
+        	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate2);	                    
+          
           // Get a host to shuffle from
+          	String logDate3 = "Sub Waiting start: " + new Date().getTime();
+        	csg.chung.mrhpc.processpool.Configure.setFX10();
+        	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate3);	                            	
           host = scheduler.getHost();
+        	String logDate4 = "Sub Waiting end: " + new Date().getTime();
+        	csg.chung.mrhpc.processpool.Configure.setFX10();
+        	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate4);	                              
           metrics.threadBusy();
 
           // Shuffle
+      	String logDate5 = "Sub Copying start: " + new Date().getTime();
+    	csg.chung.mrhpc.processpool.Configure.setFX10();
+    	csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate5);	                    
           copyFromHost(host);
+          String logDate6 = "Sub Copying end: " + new Date().getTime();
+          csg.chung.mrhpc.processpool.Configure.setFX10();
+          csg.chung.mrhpc.utils.Lib.appendToFile(csg.chung.mrhpc.processpool.Configure.ANALYSIS_LOG + ConverterUtils.toContainerId(System.getenv(Environment.CONTAINER_ID.name())), logDate6);	                              
         } finally {
           if (host != null) {
             scheduler.freeHost(host);

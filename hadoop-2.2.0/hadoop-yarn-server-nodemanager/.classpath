@@ -43,7 +43,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="/hadoop-annotations"/>
-	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/lib/tools.jar"/>
+	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/lib/tools.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0.jar" sourcepath="M2_REPO/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/chung/.m2/repository/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0-javadoc.jar!/"/>
@@ -270,7 +270,6 @@
 			<attribute name="javadoc_location" value="jar:file:/Users/chung/.m2/repository/commons-daemon/commons-daemon/1.0.13/commons-daemon-1.0.13-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/MpiJava/lib/mpi.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Hadoop-Deploy"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

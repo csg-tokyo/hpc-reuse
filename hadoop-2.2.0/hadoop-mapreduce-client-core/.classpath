@@ -42,7 +42,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="/hadoop-annotations"/>
-	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk1.7.0_40.jdk/Contents/Home/lib/tools.jar"/>
+	<classpathentry kind="lib" path="/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/lib/tools.jar"/>
 	<classpathentry kind="var" path="M2_REPO/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0.jar" sourcepath="M2_REPO/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0-sources.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:file:/Users/chung/.m2/repository/com/google/inject/extensions/guice-servlet/3.0/guice-servlet-3.0-javadoc.jar!/"/>
@@ -268,6 +268,5 @@
 	</classpathentry>
 	<classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5.jar" sourcepath="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5-sources.jar"/>
 	<classpathentry kind="var" path="M2_REPO/tomcat/jasper-compiler/5.5.23/jasper-compiler-5.5.23.jar"/>
-	<classpathentry kind="lib" path="/Users/chung/hadoop/mpi.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

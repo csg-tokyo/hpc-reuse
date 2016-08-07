@@ -41,6 +41,8 @@ public class Configure {
 	
 	public static int NUMBER_PROCESS_EACH_NODE 	= 6;
 	
+	public static int NUMBER_DATA_NODE = 32;
+	
 	/**
 	 * Lock file
 	 */
@@ -61,7 +63,8 @@ public class Configure {
 		ELAPSED_TIME			= "00:30:00";	
 		
 		NUMBER_PROCESS_EACH_NODE= 6;	
-	
+		NUMBER_DATA_NODE = 32;
+		
 		LOCK_FILE_PATH = DEPLOY_FOLDER + "/hadoop/lock/";		
 	}
 	

@@ -139,10 +139,12 @@ public class FX10 {
 			System.out.println("DataNode " + rank + " is starting");
 			
 			// Start DataNode
-			Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/hadoop-daemon.sh start datanode");
-			//Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/yarn-daemon.sh start nodemanager");
+			if (rank <= Configure.NUMBER_PROCESS_EACH_NODE * Configure.NUMBER_DATA_NODE){
+				Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/hadoop-daemon.sh start datanode");
+				//Lib.runCommand(FX10.HADOOP_FOLDER + rank + "/sbin/yarn-daemon.sh start nodemanager");
 			
-			System.out.println("Start DataNode " + rank + " --> OK");
+				System.out.println("Start DataNode " + rank + " --> OK");
+			}
 			//Lib.runCommand("java csg.chung.mrhpc.deploy.test.SortClient >> /mppxb/c83014/tuning/rank/" + rank + ".txt 2>&1");
 			//new SortThread(rank).start();
 			//new SortClient(rank);
